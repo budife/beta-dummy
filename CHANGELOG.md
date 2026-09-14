@@ -2,6 +2,12 @@
 
 All notable user-facing changes to BETA are tracked here.
 
+## Core v6.16.20 - 14 September 2026
+
+- Removed runtime external data integrations and moved Campaign Counter data to browser-local storage.
+- Replaced HSBC production link defaults and validators with the dummy `mail.dummy.example` domain while retaining CDN libraries.
+- Added `EXTERNAL-INTEGRATIONS.md` with replacement guidance and clarified local/CDN privacy badges.
+
 ## Core v6.16.15 - 10 September 2026
 
 - Rebranded the application to BETA (Budd Email Tools & Automation).

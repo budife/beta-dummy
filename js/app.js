@@ -148,18 +148,19 @@ const TOOL_META = {
 const TOOL_COUNT = Object.keys(TOOL_META).filter((path) => path !== '/maintenance').length;
 
 const TOOL_PRIVACY = {
-  '/bookmarklet': 'Local only',
-  '/campaign-counter': 'Local only',
-  '/config-edm': 'Local only',
-  '/database-checker': 'External checks optional',
-  '/database-generator': 'Local only',
+  '/bookmarklet': 'Local data',
+  '/campaign-counter': 'Local data',
+  '/config-edm': 'Local data',
+  '/database-checker': 'CDN library',
+  '/database-generator': 'Local data',
 
-  '/layout-checker': 'External checks optional',
-  '/layout-slicer': 'Local only',
-  '/tnc-uploader': 'External checks optional',
-  '/text-correction': 'Local only',
-  '/wfh-tracker': 'External holiday sync',
-  '/maintenance': 'Local only'
+  '/layout-checker': 'CDN library',
+  '/layout-slicer': 'Local data',
+  '/tnc-uploader': 'Local data',
+  '/text-correction': 'Local data',
+  '/wfh-tracker': 'Local holiday data',
+  '/doc-to-html': 'CDN library',
+  '/maintenance': 'Local data'
 };
 
 const LAZY_SCRIPT_CACHE = new Map();
@@ -239,7 +240,7 @@ function renderToolVersionBadge(path, route) {
 function renderPrivacyBadge(path) {
   const label = TOOL_PRIVACY[path];
   if (!label) return '';
-  const isLocal = label === 'Local only';
+  const isLocal = label.includes('Local');
   return `<span class="tool-privacy-badge${isLocal ? ' is-local' : ''}">${escapeHtml(label)}</span>`;
 }
 

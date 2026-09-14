@@ -54,7 +54,7 @@ See `STYLE-GUIDE.md` section "Release Hygiene" for the full checklist. Key items
 - eDM Helper is a static web application hosted on GitHub Pages.
 - Branch: `dev`.
 - Main technologies: vanilla HTML/CSS/JS, no build step.
-- Supabase is used only for Campaign Counter.
+- Runtime integrations are local-only; no Supabase or external service is used.
 
 ## Communication
 

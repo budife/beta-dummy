@@ -94,7 +94,7 @@
   };
 
   const ctx = els.canvas.getContext('2d');
-  const PUBLIC_LAYOUT_BASE_URL = 'http://mail.hsbc.com.hk/id';
+  const PUBLIC_LAYOUT_BASE_URL = 'http://mail.dummy.example/id';
 
   function setActiveAccordion(section) {
     const active = section === 'slicer' ? 'slicer' : 'campaign';

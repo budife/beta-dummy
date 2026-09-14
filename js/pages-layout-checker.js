@@ -8,33 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
    ORIGINAL CODE
    =================================== */
 
-// Cloudflare Worker URL for fetching remote HTML.
-// Replace with your deployed Worker URL.
-const HTML_FETCHER_WORKER_URL = 'https://html-fetcher.budi-indra94.workers.dev';
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw29ldtoG5eq2I0bmeF055VWaZ_Ejk59E1wMrhY2pSdWuEHTDRL3saPCR2BoAC6-nmP/exec';
 const FETCHER_PROVIDER_KEY = 'edm_layout_checker_fetcher_provider';
 const FETCHER_CUSTOM_URL_KEY = 'edm_layout_checker_fetcher_custom_url';
 
 const FETCHER_PROVIDERS = {
-  'google-apps-script': {
-    label: 'Google Apps Script',
-    buildUrl: (targetUrl) => `${GOOGLE_APPS_SCRIPT_URL}?url=${encodeURIComponent(targetUrl)}`
-  },
-  'cloudflare-worker': {
-    label: 'Cloudflare Worker',
-    buildUrl: (targetUrl) => `${HTML_FETCHER_WORKER_URL}?url=${encodeURIComponent(targetUrl)}`
-  },
-  'custom': {
-    label: 'Custom URL',
-    buildUrl: (targetUrl, _key, customBaseUrl) => {
-      const base = customBaseUrl.trim();
-      if (base.includes('?')) {
-        const separator = base.endsWith('?') || base.endsWith('&') ? '' : '&';
-        return `${base}${separator}url=${encodeURIComponent(targetUrl)}`;
-      }
-      return `${base}?url=${encodeURIComponent(targetUrl)}`;
-    }
-  }
+  local: { label: 'Local file or pasted HTML' }
 };
 
 // ---- Extracted scripts from inline <script> blocks ----
@@ -271,23 +249,13 @@ const highlightKrhredToggle = document.getElementById('highlightKrhredToggle');
   }
 
   function getImageFetchAttempts(url) {
-    const attempts = [{ url, via: 'direct' }];
-    if (window.EDM_PRIVACY?.get?.('proxyFallbacks') === false) return attempts;
-
-    const cleanUrl = url.replace(/^https?:\/\//, '');
-    return [
-      ...attempts,
-      { url: `https://images.weserv.nl/?url=${encodeURIComponent(cleanUrl)}`, via: 'Weserv Image' },
-      { url: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, via: 'AllOrigins Raw' },
-      { url: `https://corsproxy.io/?${encodeURIComponent(url)}`, via: 'CorsProxy' },
-      { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, via: 'CodeTabs' }
-    ];
+    return [];
   }
 
   async function fetchImageAsDataUrl(url) {
     if (!url) return '';
     if (screenshotImageCache.has(url)) return screenshotImageCache.get(url);
-    if (window.EDM_PRIVACY?.get?.('externalChecks') === false) return '';
+    return '';
 
     const controllers = [];
     const fetchAttempt = async (attempt) => {
@@ -492,7 +460,7 @@ const highlightKrhredToggle = document.getElementById('highlightKrhredToggle');
     setLayoutStatus(hasContent ? 'ready' : 'empty', hasContent ? 'Layout ready' : 'No layout loaded');
   }
 
-  function showLoadingOverlay(fetcherName = 'Google Apps Script') {
+  function showLoadingOverlay(fetcherName = 'Local file or pasted HTML') {
     hideErrorOverlay();
     if (fetchOverlayTitle) fetchOverlayTitle.textContent = 'Checking...';
     if (fetchOverlayStatus) fetchOverlayStatus.textContent = 'Fetching website';
@@ -827,6 +795,9 @@ const highlightKrhredToggle = document.getElementById('highlightKrhredToggle');
       return;
     }
     
+    setLayoutStatus('error', 'External fetch is disabled. Use Manual Paste or a local file.');
+    return;
+
     // Show progress
     showProgress('Fetching as plain text...', 'fetch-text');
     
@@ -1007,7 +978,7 @@ const highlightKrhredToggle = document.getElementById('highlightKrhredToggle');
 
     try {
       // Get fetcher provider name
-      const fetcherName = fetcherProviderSelect?.options[fetcherProviderSelect.selectedIndex]?.text || 'Google Apps Script';
+      const fetcherName = 'Local file or pasted HTML';
 
       // Show loading overlay in preview panel
       showLoadingOverlay(fetcherName);
@@ -1041,62 +1012,7 @@ const highlightKrhredToggle = document.getElementById('highlightKrhredToggle');
   });
 
   async function fetchRemoteHtmlFast(url) {
-    if (window.EDM_PRIVACY?.get?.('externalChecks') === false) {
-      throw new Error('External URL checks are disabled in Documentation privacy settings.');
-    }
-
-    const targetUrl = new URL(url);
-    if (targetUrl.host.toLowerCase() !== 'mail.hsbc.com.hk') {
-      throw new Error('Only mail.hsbc.com.hk URLs are allowed.');
-    }
-
-    const providerKey = (fetcherProviderSelect?.value || localStorage.getItem(FETCHER_PROVIDER_KEY) || 'google-apps-script').trim();
-    const customBaseUrl = (fetcherCustomUrlInput?.value || localStorage.getItem(FETCHER_CUSTOM_URL_KEY) || '').trim();
-    const provider = FETCHER_PROVIDERS[providerKey] || FETCHER_PROVIDERS['google-apps-script'];
-
-    if (providerKey === 'custom' && !customBaseUrl) {
-      throw new Error('Custom URL fetcher requires a worker URL. Please enter it in the HTML fetcher settings.');
-    }
-
-    const fetchUrl = provider.buildUrl(url, '', customBaseUrl);
-    const isGoogleScript = providerKey === 'google-apps-script';
-    const maxRetries = isGoogleScript ? 2 : 0;
-    let lastError;
-
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      const abortFromGlobal = () => controller.abort();
-      abortController?.signal?.addEventListener('abort', abortFromGlobal, { once: true });
-
-      try {
-        if (attempt > 0) {
-          if (fetchOverlayStatus) fetchOverlayStatus.textContent = `Retrying (${attempt}/${maxRetries})...`;
-          await new Promise(r => setTimeout(r, 2000));
-        }
-
-        const response = await fetch(fetchUrl, {
-          signal: controller.signal,
-          headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
-        });
-        if (!response.ok) {
-          const message = await response.text().catch(() => '');
-          throw new Error(`${provider.label} HTTP ${response.status}: ${message}`);
-        }
-        const html = await response.text();
-        if (!html || !/<html|<!doctype|<table|<body/i.test(html)) {
-          throw new Error(`${provider.label} response is not valid HTML`);
-        }
-        return { html, via: provider.label };
-      } catch (err) {
-        lastError = err;
-        if (attempt < maxRetries) continue;
-      } finally {
-        clearTimeout(timeoutId);
-        abortController?.signal?.removeEventListener('abort', abortFromGlobal);
-      }
-    }
-    throw lastError;
+    throw new Error('External fetchers are disabled. Load a local HTML file or paste the source instead.');
   }
 
   // Apply krhred values functionality
@@ -1350,25 +1266,19 @@ const highlightKrhredToggle = document.getElementById('highlightKrhredToggle');
   // window.addEventListener('beforeunload', saveState); // DISABLED
 
   function updateFetcherUi() {
-    const providerKey = fetcherProviderSelect?.value || 'google-apps-script';
-    if (fetcherCustomUrlRow) fetcherCustomUrlRow.classList.toggle('hidden', providerKey !== 'custom');
+     const providerKey = 'local';
+     if (fetcherCustomUrlRow) fetcherCustomUrlRow.classList.add('hidden');
   }
 
   if (fetcherProviderSelect) {
-    const savedProvider = localStorage.getItem(FETCHER_PROVIDER_KEY);
-    if (savedProvider && FETCHER_PROVIDERS[savedProvider]) {
-      fetcherProviderSelect.value = savedProvider;
-    }
+     fetcherProviderSelect.value = 'local';
     const savedCustomUrl = localStorage.getItem(FETCHER_CUSTOM_URL_KEY);
     if (savedCustomUrl && fetcherCustomUrlInput) fetcherCustomUrlInput.value = savedCustomUrl;
     updateFetcherUi();
 
     fetcherProviderSelect.addEventListener('change', () => {
-      localStorage.setItem(FETCHER_PROVIDER_KEY, fetcherProviderSelect.value);
+       localStorage.setItem(FETCHER_PROVIDER_KEY, 'local');
       updateFetcherUi();
-      if (originalUrlInput?.value.trim()) {
-        downloadBtn?.click();
-      }
     });
   }
   if (fetcherCustomUrlInput) {
@@ -1385,18 +1295,15 @@ const highlightKrhredToggle = document.getElementById('highlightKrhredToggle');
       } else {
         localStorage.removeItem(FETCHER_CUSTOM_URL_KEY);
       }
-      if (originalUrlInput?.value.trim() && fetcherProviderSelect?.value === 'custom') {
-        downloadBtn?.click();
-      }
     });
   }
   if (resetFetcherBtn) {
     resetFetcherBtn.addEventListener('click', () => {
       localStorage.removeItem(FETCHER_PROVIDER_KEY);
       localStorage.removeItem(FETCHER_CUSTOM_URL_KEY);
-      if (fetcherProviderSelect) fetcherProviderSelect.value = 'google-apps-script';
+       if (fetcherProviderSelect) fetcherProviderSelect.value = 'local';
       if (fetcherCustomUrlInput) fetcherCustomUrlInput.value = '';
       updateFetcherUi();
-      setLayoutStatus('ready', 'Fetcher reset to Google Apps Script');
+       setLayoutStatus('ready', 'External fetchers are disabled');
     });
   }

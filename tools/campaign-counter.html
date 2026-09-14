@@ -14,16 +14,15 @@
   
   
   <!-- CSS -->
-  <link rel="stylesheet" href="../css/tokens.css?v=6.16.19">
-  <link rel="stylesheet" href="../css/theme.css?v=6.16.19">
-<link rel="stylesheet" href="../css/pages-campaign-counter.css?v=6.16.19">
-  <link rel="stylesheet" href="../css/controls.css?v=6.16.19">
+  <link rel="stylesheet" href="../css/tokens.css?v=6.16.20">
+  <link rel="stylesheet" href="../css/theme.css?v=6.16.20">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="../css/pages-campaign-counter.css?v=6.16.20">
+  <link rel="stylesheet" href="../css/controls.css?v=6.16.20">
   
   <title>Campaign Counter - BETA</title>
   <meta name="theme-color" content="#0f172a" />
   <!-- Font Awesome - Non-blocking load -->
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
   
 </head>
 <body>
@@ -61,7 +60,7 @@
                   <i class="fa-solid fa-plus" aria-hidden="true"></i> Generate Campaign ID
                 </button>
               </div>
-              <p class="counter-message" id="counter-message" role="status" aria-live="polite">Connecting to Supabase...</p>
+              <p class="counter-message" id="counter-message" role="status" aria-live="polite">Using local browser storage...</p>
             </section>
 
             <section class="counter-card counter-activity" aria-labelledby="recent-activity-title">
@@ -81,7 +80,7 @@
                   <button class="counter-folder-btn" id="pick-folder" type="button">
                     <i class="fa-solid fa-folder-open" aria-hidden="true"></i> <span id="folder-btn-label">Scan Folder</span>
                   </button>
-                  <button class="counter-folder-btn" id="refresh-folder" type="button" title="Refresh from Supabase">
+                  <button class="counter-folder-btn" id="refresh-folder" type="button" title="Refresh local folder scans">
                     <i class="fa-solid fa-rotate" aria-hidden="true"></i> <span>Refresh</span>
                   </button>
                   <button class="counter-folder-btn counter-folder-btn--reset" id="reset-folder" type="button">
@@ -150,11 +149,9 @@
   </footer>
 
   <div id="tooltip-portal" aria-hidden="true"></div>
-  <script src="../js/footer.js?v=6.16.19" defer></script>
-  <script src="../js/version-config.js?v=6.16.19" defer></script>
-<script src="../js/supabase-config.js?v=6.16.13" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="../js/campaign-counter-supabase.js?v=6.16.13" defer></script>
-  <script src="../js/pages-campaign-counter.js?v=6.16.19" defer></script>
+  <script src="../js/footer.js?v=6.16.20" defer></script>
+  <script src="../js/version-config.js?v=6.16.20" defer></script>
+  <script src="../js/campaign-counter-local.js?v=6.16.20" defer></script>
+  <script src="../js/pages-campaign-counter.js?v=6.16.20" defer></script>
 </body>
 </html>

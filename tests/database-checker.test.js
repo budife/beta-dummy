@@ -386,24 +386,11 @@ test('layout test accepts pasted HTML without a network request', async () => {
   assert.equal(await checker().fetchLayoutTemplate('https://example.com/layout.html', null, html), html);
 });
 
-test('layout source fetch accepts the first valid parallel proxy response', async () => {
-  const calls = [];
-  sandbox.fetch = async (url) => {
-    calls.push(url);
-    if (url.includes('api.codetabs.com')) {
-      return {
-        ok: true,
-        text: async () => '<!doctype html><html><body>Proxy layout</body></html>'
-      };
-    }
-    throw new Error('Unavailable');
-  };
-
-  const result = await checker().fetchRemoteLayoutTemplate('https://example.com/layout.html');
-  assert.equal(result.via, 'CodeTabs');
-  assert.match(result.html, /Proxy layout/);
-  assert.equal(calls.length, 9);
-  delete sandbox.fetch;
+test('layout source fetch rejects remote URLs', async () => {
+  await assert.rejects(
+    checker().fetchRemoteLayoutTemplate('https://example.com/layout.html'),
+    /Remote layout checks are disabled/
+  );
 });
 
 test('layout test draft temporarily stores URL and subject', () => {

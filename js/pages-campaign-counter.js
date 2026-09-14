@@ -243,12 +243,12 @@ async function scanFolder() {
     updateConflictState();
     renderActivity(lastRenderedActivity);
 
-    // Save only the newly found IDs to Supabase as backup
+    // Save only the newly found IDs to local browser storage.
     if (connected && username && newEntries.length) {
       try {
         const saved = await campaignRegistryService.saveFolderScan(username, dirHandle.name, newEntries);
         const savedCount = Number.isFinite(Number(saved)) ? Number(saved) : newCount;
-        setMessage(`${savedCount} new campaign ID(s) saved to Supabase.`, 'success');
+        setMessage(`${savedCount} new campaign ID(s) saved locally.`, 'success');
       } catch (e) {
         console.warn('Folder scan backup failed', e);
         setMessage(`${newCount} new campaign ID(s) found (backup failed).`, 'error');
@@ -294,7 +294,7 @@ async function resetFolderScans() {
 
 async function refreshFolderScans() {
   if (!connected) {
-    setMessage('Not connected to Supabase.', 'error');
+    setMessage('Local Campaign Counter is unavailable.', 'error');
     return;
   }
   try {
@@ -312,7 +312,7 @@ async function refreshFolderScans() {
     renderFolderList();
     updateConflictState();
     renderActivity(lastRenderedActivity);
-    setMessage(`Refreshed — ${scans.length} campaign ID(s) loaded from Supabase.`, 'success');
+    setMessage(`Refreshed — ${scans.length} campaign ID(s) loaded locally.`, 'success');
   } catch (error) {
     console.error('Unable to refresh folder scans.', error);
     setMessage('Unable to refresh. Please try again.', 'error');
@@ -342,10 +342,10 @@ function getManualSetErrorMessage(error, candidateId) {
     return `Campaign ID ${formatId(candidateId)} already exists.`;
   }
   if (error?.code === '42702' || /column reference .* is ambiguous/i.test(message)) {
-    return 'The Supabase manual-counter function needs its qualified-column fix applied.';
+    return 'The local Campaign Counter could not apply this change.';
   }
   if (/unable to fetch|failed to fetch|network|connection/i.test(message)) {
-    return 'Unable to connect to Supabase.';
+    return 'Unable to access local Campaign Counter storage.';
   }
   if (/campaign id must be between|user name is required/i.test(message)) {
     return message;
@@ -454,8 +454,8 @@ async function refreshDashboard() {
     document.getElementById('counter-last-id').textContent = '----';
     renderActivity([]);
     setMessage(connection.reason === 'config'
-      ? 'Supabase is not configured for this deployment.'
-      : 'Unable to reach Supabase. Check your connection and refresh.', 'error');
+      ? 'Local Campaign Counter storage is unavailable.'
+      : 'Unable to load local Campaign Counter storage. Refresh and try again.', 'error');
     return;
   }
 
@@ -497,7 +497,7 @@ async function refreshDashboard() {
     updateConflictState();
     updateEditButton();
     renderActivity(activity);
-    setMessage('Supabase is connected.');
+    setMessage('Campaign Counter is using local browser storage.');
     if (typeof campaignRegistryService.subscribeCounter === 'function' && !unsubscribeCounter) {
       unsubscribeCounter = campaignRegistryService.subscribeCounter((value) => {
         currentCampaignId = Number(value) || 0;
@@ -603,7 +603,7 @@ try {
     updateConflictState();
     updateEditButton();
     setMessage(`${formatId(currentCampaignId)} manually set.`, 'success');
-    // Only refresh activity, don't reset counter from Supabase
+    // Only refresh activity, don't reset the local counter.
     const activity = await campaignRegistryService.loadRecentActivity();
     renderActivity(activity);
   } catch (serviceError) {

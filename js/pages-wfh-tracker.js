@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
-    const HOLIDAY_API_URL = 'https://upset.dev/api/holidays';
     const HOLIDAY_CACHE_PREFIX = 'edm-helper:holidays:';
     const HOLIDAY_CACHE_MAX_AGE = 1000 * 60 * 60 * 24 * 7;
 
@@ -164,23 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchHolidayMap(year) {
-      const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 5000);
-      try {
-        const response = await fetch(`${HOLIDAY_API_URL}?year=${year}`, {
-          cache: 'no-store',
-          signal: controller.signal
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return normalizeHolidayMap(await response.json());
-      } finally {
-        window.clearTimeout(timeout);
-      }
+      return {};
     }
 
     async function loadHolidayData(year) {
       if (window.EDM_PRIVACY?.get?.('holidaySync') === false) {
-        setHolidaySyncStatus('Holiday source: auto-sync off', 'neutral');
+        setHolidaySyncStatus('Holiday source: local data only', 'neutral');
         return;
       }
 
@@ -189,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.holidays = { ...defaultHolidays, ...cached };
         setHolidaySyncStatus(`Holiday source: cached ${year}`, 'success');
       } else {
-        setHolidaySyncStatus(`Holiday source: updating ${year}...`, 'loading');
+        setHolidaySyncStatus(`Holiday source: local data ${year}`, 'success');
       }
 
       try {
@@ -197,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (Object.keys(remoteHolidays).length) {
           setCachedHolidayMap(year, remoteHolidays);
           window.holidays = { ...defaultHolidays, ...remoteHolidays };
-          setHolidaySyncStatus(`Holiday source: online ${year}`, 'success');
+           setHolidaySyncStatus(`Holiday source: local data ${year}`, 'success');
           if (currentYear === year) renderCalendar(currentMonth, currentYear);
         }
       } catch (error) {

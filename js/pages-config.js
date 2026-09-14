@@ -865,7 +865,7 @@ function validateLinkFormat(link) {
   if (!link || link.trim() === '') return { valid: false, error: '' };
   
   const trimmedLink = link.trim();
-  const requiredPrefix = 'http://mail.hsbc.com.hk';
+  const requiredPrefix = 'http://mail.dummy.example';
   const requiredSuffix = '.html';
   
   // Check if link starts with correct prefix
@@ -873,17 +873,17 @@ function validateLinkFormat(link) {
     if (!trimmedLink.startsWith('http://')) {
       return { 
         valid: false, 
-        error: 'Link harus dimulai dengan http://mail.hsbc.com.hk' 
+        error: 'Link harus dimulai dengan http://mail.dummy.example'
       };
-    } else if (trimmedLink.startsWith('http://mail.hsbc.com')) {
+    } else if (trimmedLink.startsWith('http://mail.dummy')) {
       return { 
         valid: false, 
-        error: 'Link harus menggunakan domain lengkap: http://mail.hsbc.com.hk' 
+        error: 'Link harus menggunakan domain lengkap: http://mail.dummy.example'
       };
     } else {
       return { 
         valid: false, 
-        error: 'Link harus dimulai dengan http://mail.hsbc.com.hk' 
+        error: 'Link harus dimulai dengan http://mail.dummy.example'
       };
     }
   }
@@ -908,7 +908,7 @@ function validateLinkFormat(link) {
   if (middleContent.trim() === '') {
     return { 
       valid: false, 
-      error: 'Link harus memiliki path setelah domain (contoh: http://mail.hsbc.com.hk/path/file.html)' 
+      error: 'Link harus memiliki path setelah domain (contoh: http://mail.dummy.example/path/file.html)'
     };
   }
   
@@ -916,7 +916,7 @@ function validateLinkFormat(link) {
   if (!middleContent.startsWith('/')) {
     return { 
       valid: false, 
-      error: 'Link harus memiliki path yang valid (contoh: http://mail.hsbc.com.hk/1450-campaign.html)' 
+      error: 'Link harus memiliki path yang valid (contoh: http://mail.dummy.example/1450-campaign.html)'
     };
   }
   
@@ -1882,7 +1882,7 @@ if (elements.linkInput) {
     const isEmpty = linkValue === '';
     
     // Auto-convert https to http while typing
-    if (linkValue.startsWith('https://mail.hsbc.com.hk')) {
+    if (linkValue.startsWith('https://mail.dummy.example')) {
       linkValue = 'http://' + linkValue.substring(8);
       elements.linkInput.value = linkValue;
     }
@@ -2043,7 +2043,7 @@ if (elements.linkInput) {
       let linkValue = elements.linkInput.value.trim();
       
       // Auto-convert https to http
-      if (linkValue.startsWith('https://mail.hsbc.com.hk')) {
+    if (linkValue.startsWith('https://mail.dummy.example')) {
         linkValue = 'http://' + linkValue.substring(8);
         elements.linkInput.value = linkValue;
         

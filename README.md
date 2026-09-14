@@ -33,9 +33,9 @@ Internal deployment; server URL is environment-specific.
 This project is designed for internal-style daily work and avoids sending sensitive data out by default.
 
 - Database files, generated campaign IDs, WFH marks, and most tool data stay in the browser or selected local folders.
-- External network access is optional for features such as layout URL fetching, link checking, proxy fallback, or holiday sync.
+- External network access is not used by runtime features. Load remote material manually as a local file or pasted source.
 - DOCX to HTML loads Mammoth, JSZip, CodeMirror, and docx-preview from CDN assets; mirror these assets locally if the private server blocks outbound CDN access.
-- Campaign Counter Phase 1 uses Supabase with a public anon key for shared Campaign ID allocation and activity; the Monday bookmarklet remains browser-local.
+- Campaign Counter uses browser-local storage for Campaign ID allocation and activity; the Monday bookmarklet remains browser-local.
 - Review the source before using it with confidential work. The code is plain static web code and can be inspected directly in this repository.
 
 ## Run Locally

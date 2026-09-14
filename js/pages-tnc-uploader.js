@@ -8,7 +8,7 @@
   const STORE_KEY = 'edm-helper-tnc-uploader-items-v1';
   const ACTIVITY_STORE_KEY = 'edm-helper-tnc-uploader-activity-v1';
   const MAX_ACTIVITY_ITEMS = 30;
-  const DEFAULT_PUBLIC_BASE_URL = 'https://mail.hsbc.com.hk/id/emailblast';
+  const DEFAULT_PUBLIC_BASE_URL = 'https://mail.dummy.example/id/emailblast';
   const DIRECT_LINK_CHECK_TIMEOUT_MS = 2500;
   const PROXY_LINK_CHECK_TIMEOUT_MS = 6500;
   const elements = {};
@@ -890,15 +890,7 @@
   }
 
   function getProxyAttempts(url) {
-    const cleanUrl = url.replace(/^https?:\/\//, '');
-    return [
-      { url: `https://r.jina.ai/http://${cleanUrl}`, via: 'Jina HTTP' },
-      { url: `https://r.jina.ai/https://${cleanUrl}`, via: 'Jina HTTPS' },
-      { url: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, via: 'AllOrigins Raw' },
-      { url: `https://corsproxy.io/?${encodeURIComponent(url)}`, via: 'CorsProxy' },
-      { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, via: 'CodeTabs' },
-      { url: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, via: 'AllOrigins', json: true },
-    ];
+    return [];
   }
 
   async function verifyProxyAttempt(attempt) {
@@ -924,6 +916,14 @@
   }
 
   async function verifyLink(url) {
+    return {
+      ok: false,
+      status: '',
+      via: '',
+      cannotVerify: true,
+      disabled: true,
+    };
+    /*
     if (window.EDM_PRIVACY?.get?.('externalChecks') === false) {
       return {
         ok: false,
@@ -972,6 +972,7 @@
       via: '',
       cannotVerify: true,
     };
+    */
   }
 
   async function checkItemLink(id) {

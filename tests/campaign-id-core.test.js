@@ -137,28 +137,23 @@ test('local Campaign ID store exposes its existing backup operations', () => {
   );
 });
 
-test('Campaign Counter Phase 1 uses a dedicated Supabase service while the bookmarklet stays local', () => {
-  const adapter = fs.readFileSync(path.join(__dirname, '../js/campaign-counter-supabase.js'), 'utf8');
+test('Campaign Counter uses a local service while the bookmarklet stays local', () => {
+  const adapter = fs.readFileSync(path.join(__dirname, '../js/campaign-counter-local.js'), 'utf8');
   const counter = fs.readFileSync(path.join(__dirname, '../js/pages-campaign-counter.js'), 'utf8');
   const bookmarklet = fs.readFileSync(path.join(__dirname, '../js/monday-campaign-bookmarklet.js'), 'utf8');
-  assert.match(adapter, /createClient/);
-  assert.match(adapter, /set_next_campaign_id/);
-  assert.match(adapter, /generate_campaign_id/);
-  assert.match(adapter, /back_campaign_id/);
-  assert.match(adapter, /campaign_registry/);
-  assert.match(adapter, /campaign_counter/);
+  assert.match(adapter, /localStorage/);
+  assert.doesNotMatch(adapter, /supabase|createClient|script\.google/i);
   assert.match(adapter, /subscribeCounter/);
   assert.match(counter, /CampaignRegistryService/);
   assert.doesNotMatch(bookmarklet, /supabase|campaign-id-bridge|neuyjcotcmjnndjyzbcq/i);
 });
 
-test('Campaign Counter Phase 1 makes Supabase the single source of truth for the counter', () => {
+test('Campaign Counter uses browser storage as its source of truth', () => {
   const counter = fs.readFileSync(path.join(__dirname, '../js/pages-campaign-counter.js'), 'utf8');
-  const sql = fs.readFileSync(path.join(__dirname, '../supabase/fix-set-next-campaign-id.sql'), 'utf8');
-  assert.match(sql, /create table if not exists public\.campaign_counter/);
-  assert.match(sql, /current_value = current_value \+ 1/);
-  assert.match(sql, /greatest\(current_value - 1, 1\)/);
-  assert.match(sql, /supabase_realtime add table public\.campaign_counter/);
+  const adapter = fs.readFileSync(path.join(__dirname, '../js/campaign-counter-local.js'), 'utf8');
+  assert.match(adapter, /STORAGE_KEY/);
+  assert.match(adapter, /Math\.min\(current \+ 1, 9999\)/);
+  assert.match(adapter, /Math\.max\(\(await loadCounter\(\)\) - 1, 1\)/);
   assert.doesNotMatch(counter, /currentCampaignId\s*=\s*Math\.min\(currentCampaignId \+ 1, 9999\)/);
   assert.match(counter, /campaignRegistryService\.generateCampaign\(username, dateStamp, campaignName\)/);
   assert.match(counter, /campaignRegistryService\.backCampaign\(username\)/);
@@ -185,12 +180,7 @@ test('Campaign Counter Phase 1 exposes only the dashboard workflow', () => {
   assert.match(counterSource, /id="edit-last-campaign"/);
   assert.match(counterSource, /id="manual-dialog"/);
   assert.match(counterScript, /setNextCampaignId/);
-  const manualFix = fs.readFileSync(path.join(__dirname, '../supabase/fix-set-next-campaign-id.sql'), 'utf8');
-  assert.match(manualFix, /insert into public\.campaign_registry/);
-  assert.match(manualFix, /returning \* into v_registry/);
-  assert.match(manualFix, /order by cr\.generated_at desc, cr\.id desc/);
-  assert.match(manualFix, /v_next_campaign_id/);
-  assert.doesNotMatch(manualFix, /greater than the current/i);
+  assert.match(counterScript, /setNextCampaignId/);
   assert.doesNotMatch(counterSource, /id="scan-folder"/);
   assert.match(counterScript, /showDirectoryPicker/);
   assert.match(bookmarkletSource, /<option value="merge">Merge<\/option>/);

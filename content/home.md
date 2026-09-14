@@ -25,6 +25,9 @@ Use the sidebar to open a tool, or start with one of the quick access links belo
 - **Core v6.16.19** - Removed the DOCX to HTML beta badge.
 - **DOCX to HTML v1.3.10** - Removed the obsolete beta warning popup.
 
+### 14 September 2026
+- **Core v6.16.20** - Removed runtime external data integrations, moved Campaign Counter to browser-local storage, replaced HSBC production links with `mail.dummy.example`, and clarified local/CDN privacy badges.
+
 ### 10 September 2026
 - **Text Correction v1.0.2** - Pasted content is now forced to plain text without rich-text formatting.
 - **DOCX to HTML v1.3.9** - Finalized the local DOCX conversion and editing workflow.

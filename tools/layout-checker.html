@@ -13,15 +13,15 @@
   <meta name="author" content="BETA">
   
   <!-- CSS -->
-  <link rel="stylesheet" href="../css/tokens.css?v=6.16.19">
-  <link rel="stylesheet" href="../css/theme.css?v=6.16.19">
-  <link rel="stylesheet" href="../css/pages-layout-checker.css?v=6.16.19">
-  <link rel="stylesheet" href="../css/controls.css?v=6.16.19">
+  <link rel="stylesheet" href="../css/tokens.css?v=6.16.20">
+  <link rel="stylesheet" href="../css/theme.css?v=6.16.20">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="../css/pages-layout-checker.css?v=6.16.20">
+  <link rel="stylesheet" href="../css/controls.css?v=6.16.20">
   
   <title>Layout Checker - BETA</title>
   <meta name="theme-color" content="#0f172a" />
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -73,18 +73,16 @@
           <summary>HTML fetcher</summary>
           <div class="lc-url-row">
             <select id="fetcherProviderSelect" class="lc-input">
-              <option value="google-apps-script">Google Apps Script</option>
-              <option value="cloudflare-worker">Cloudflare Worker</option>
-              <option value="custom">Custom URL</option>
+              <option value="local">Local file or pasted HTML</option>
             </select>
             <button id="resetFetcherBtn" class="lc-btn lc-btn-secondary lc-btn-sm" type="button" title="Reset fetcher">
               <i class="fa-solid fa-rotate-left"></i>
             </button>
           </div>
           <div class="lc-worker-row lc-worker-custom-row hidden" id="fetcherCustomUrlRow">
-            <input type="url" id="fetcherCustomUrlInput" placeholder="https://your-worker.com/?url=" class="lc-input" />
+             <input type="url" id="fetcherCustomUrlInput" placeholder="External fetcher disabled" class="lc-input" disabled />
           </div>
-          <p class="lc-worker-hint">Google Apps Script is the default. Select Custom URL to use your own worker or proxy.</p>
+           <p class="lc-worker-hint">External fetchers are disabled. Load a local HTML file or paste HTML source.</p>
         </details>
       </div>
       <div class="lc-source-actions">
@@ -175,7 +173,7 @@
             <div class="lc-fetch-overlay-content">
               <div id="fetchOverlayTitle" class="lc-fetch-overlay-title">Checking...</div>
               <div id="fetchOverlayStatus" class="lc-fetch-overlay-status">Fetching website</div>
-              <div id="fetchOverlayProvider" class="lc-fetch-overlay-provider">Google Apps Script</div>
+              <div id="fetchOverlayProvider" class="lc-fetch-overlay-provider">Local file or pasted HTML</div>
               <i class="fa-solid fa-circle-notch fa-spin lc-fetch-overlay-spinner"></i>
             </div>
           </div>
@@ -221,10 +219,10 @@
   </footer>
 
 <script src="../js/footer.js" defer></script>
-<script src="../js/typo-dictionary.js?v=6.16.19" defer></script>
-<script src="../js/typo-engine.js?v=6.16.19" defer></script>
-<script src="../js/version-config.js?v=6.16.19" defer></script>
-<script src="../js/privacy-settings.js?v=6.16.19" defer></script>
+<script src="../js/typo-dictionary.js?v=6.16.20" defer></script>
+<script src="../js/typo-engine.js?v=6.16.20" defer></script>
+<script src="../js/version-config.js?v=6.16.20" defer></script>
+<script src="../js/privacy-settings.js?v=6.16.20" defer></script>
 <script src="../js/pages-layout-checker.js?v=6.16.20" defer></script>
 </body>
 </html>

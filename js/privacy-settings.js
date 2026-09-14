@@ -12,9 +12,9 @@
       defaultValue: true
     },
     proxyFallbacks: {
-      label: 'Enable proxy fallback',
-      description: 'Allows fallback proxy services only when direct browser requests are blocked.',
-      defaultValue: true
+      label: 'Proxy fallback (disabled)',
+      description: 'Retained for old browser settings only. Proxy services are no longer used.',
+      defaultValue: false
     },
     holidaySync: {
       label: 'Enable holiday auto-sync',

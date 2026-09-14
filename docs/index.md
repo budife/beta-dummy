@@ -24,14 +24,14 @@ eDM Helper is designed as a local-first internal helper. Files such as database 
 - Database, XML, XLSX, PDF, and generated output files are not uploaded by eDM Helper.
 - Campaign Counter and Monday bookmarklet data stay in browser-local storage.
 - TNC Uploader saves files to the folder selected by the user and only generates public URL text.
-- Network access is only used by URL-based checks, layout fetching, PDF live checks, and holiday sync.
-- Proxy fallback should only be enabled when browser CORS blocks direct access and the user accepts that the target public URL may be requested through a third-party proxy.
+- Runtime network access is disabled. URL checks, remote layout fetching, PDF live checks, and holiday sync do not contact external services.
+- Proxy fallback is disabled and retained only as a legacy settings key.
 
 :::details What can contact a third-party service?
 
-- Layout Checker URL loading may fetch the layout URL directly and, if enabled, through proxy fallbacks.
-- TNC Uploader Check may verify a public PDF URL directly and, if enabled, through proxy fallbacks.
-- WFH Tracker holiday sync requests public Indonesian holiday data by year.
+- Layout Checker requires a local HTML file or pasted source.
+- TNC Uploader does not verify PDF links over the network.
+- WFH Tracker uses its built-in local holiday data.
 
 These flows do not intentionally upload local files or customer databases. They only request the URL or year needed for the selected action.
 :::
@@ -49,9 +49,7 @@ These flows do not intentionally upload local files or customer databases. They 
 
 Use the [Maintenance](/maintenance) page when working in stricter office environments. Privacy settings are saved in this browser only and apply immediately to the related tool.
 
-- Turn off external URL checks to prevent tools from fetching public layout/PDF URLs.
-- Turn off proxy fallback to allow direct browser checks only.
-- Turn off holiday auto-sync to keep WFH Tracker on the built-in local holiday fallback.
+- External URL checks, proxy fallback, and holiday auto-sync are disabled in this deployment.
 
 ## Global Navigation
 
@@ -167,7 +165,7 @@ Layout Checker loads or accepts HTML source, detects KRHRED placeholders, applie
 
 :::details Network behavior
 
-If a layout URL is used, the tool may request the layout directly. If direct browser access is blocked and proxy fallback is enabled, it may try proxy services. Disable external checks or proxy fallback in Docs when working with restricted material.
+Remote layout URLs are not requested. Use a local HTML file or paste the source instead.
 :::
 
 ## Layout Slicer
@@ -246,7 +244,7 @@ Use Replace PDF link when an existing public PDF URL must be replaced. Paste the
 
 :::details Live check behavior
 
-Check only verifies whether a generated public PDF link appears reachable. It does not upload the PDF. If direct browser check fails and proxy fallback is enabled, it may use a proxy check. Disable proxy fallback if that is not allowed.
+Link checking is disabled to prevent URLs from being sent to external services. Use Open for manual verification.
 :::
 
 ## WFH Tracker
