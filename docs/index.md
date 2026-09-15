@@ -12,6 +12,7 @@ category: Reference
 - [Network controls](#network-settings)
 - [Local backup](#local-data-backup)
 - [Recovery and audit](#recovery-and-audit)
+- [Credits](#credits-dedication)
 
 Use the search field to find a tool, data type, setting, filename, or error message quickly. This page combines the former Documentation and Maintenance pages.
 

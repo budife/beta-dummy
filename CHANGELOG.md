@@ -2,6 +2,11 @@
 
 All notable user-facing changes to BETA are tracked here.
 
+## Core v6.16.22 - 16 September 2026
+
+- Fixed Privacy & Security section navigation tabs after combining Documentation and Maintenance.
+- Restored the Credits navigation button and aligned active-anchor styling with the renamed security navigation section.
+
 ## Core v6.16.21 - 16 September 2026
 
 - Combined Documentation and Maintenance into one Privacy & Security page.

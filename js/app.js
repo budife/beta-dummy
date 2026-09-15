@@ -551,7 +551,7 @@ function scrollToMarkdownAnchor(anchor, options = {}) {
 
 function setActiveDocsTab(container, anchor) {
   if (!container || !anchor) return;
-  container.querySelectorAll('[data-section="docs-navigation"] a[data-anchor]').forEach((link) => {
+  container.querySelectorAll('[data-section="security-navigation"] a[data-anchor]').forEach((link) => {
     link.classList.toggle('is-active', link.dataset.anchor === anchor);
   });
 }
@@ -711,7 +711,7 @@ function enhanceDocsPage(container) {
   renderLocalBackup(container);
   renderPrivacySettings(container);
   const currentAnchor = window.location.hash.slice(1);
-  const firstTab = container.querySelector('[data-section="docs-navigation"] a[data-anchor]');
+  const firstTab = container.querySelector('[data-section="security-navigation"] a[data-anchor]');
   setActiveDocsTab(container, currentAnchor || firstTab?.dataset.anchor);
 }
 
