@@ -21,12 +21,22 @@ Use the sidebar to open a tool, or start with one of the quick access links belo
 
 ## Recent Updates
 
+### 16 September 2026
+- **Campaign Counter** - Fixed Generate staying disabled after returning from another tool and made clipboard copying optional.
+- **TNC Uploader** - Fixed queued PDF rendering, added numbered dropped-file entries, and removed external link checks.
+- **WFH Tracker** - Removed holiday API synchronization and kept holiday data local-only.
+- **Layout Checker** - Restored the external HTML fetcher worker files for configured external fetching.
+
+### 15 September 2026
+- **Core v6.16.20** - Updated every tool privacy badge to identify local processing, Supabase sharing, optional external checks, and CDN assets.
+- **Campaign Counter v1.7.0** - Replaced Supabase with local counter storage and added JSON backup import/export.
+- **TNC Uploader v0.3.12** - Removed external PDF link checking; generated links can still be copied or opened manually.
+- **TNC Uploader v0.3.13** - Keeps queued PDF names visible after local history is restored and explains when a file must be selected again to save.
+- **WFH Tracker v1.3.0** - Removed external holiday sync and now uses built-in local holiday data only.
+
 ### 11 September 2026
 - **Core v6.16.19** - Removed the DOCX to HTML beta badge.
 - **DOCX to HTML v1.3.10** - Removed the obsolete beta warning popup.
-
-### 14 September 2026
-- **Core v6.16.20** - Removed runtime external data integrations, moved Campaign Counter to browser-local storage, replaced HSBC production links with `mail.dummy.example`, and clarified local/CDN privacy badges.
 
 ### 10 September 2026
 - **Text Correction v1.0.2** - Pasted content is now forced to plain text without rich-text formatting.

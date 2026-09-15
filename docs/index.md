@@ -24,14 +24,13 @@ eDM Helper is designed as a local-first internal helper. Files such as database 
 - Database, XML, XLSX, PDF, and generated output files are not uploaded by eDM Helper.
 - Campaign Counter and Monday bookmarklet data stay in browser-local storage.
 - TNC Uploader saves files to the folder selected by the user and only generates public URL text.
-- Runtime network access is disabled. URL checks, remote layout fetching, PDF live checks, and holiday sync do not contact external services.
-- Proxy fallback is disabled and retained only as a legacy settings key.
+- Network access is only used by URL-based checks and layout fetching.
+- Proxy fallback should only be enabled when browser CORS blocks direct access and the user accepts that the target public URL may be requested through a third-party proxy.
 
 :::details What can contact a third-party service?
 
-- Layout Checker requires a local HTML file or pasted source.
-- TNC Uploader does not verify PDF links over the network.
-- WFH Tracker uses its built-in local holiday data.
+- Layout Checker URL loading may fetch the layout URL directly and, if enabled, through proxy fallbacks.
+- TNC Uploader Check may verify a public PDF URL directly and, if enabled, through proxy fallbacks.
 
 These flows do not intentionally upload local files or customer databases. They only request the URL or year needed for the selected action.
 :::
@@ -49,7 +48,8 @@ These flows do not intentionally upload local files or customer databases. They 
 
 Use the [Maintenance](/maintenance) page when working in stricter office environments. Privacy settings are saved in this browser only and apply immediately to the related tool.
 
-- External URL checks, proxy fallback, and holiday auto-sync are disabled in this deployment.
+- Turn off external URL checks to prevent tools from fetching public layout/PDF URLs.
+- Turn off proxy fallback to allow direct browser checks only.
 
 ## Global Navigation
 
@@ -89,38 +89,26 @@ Bookmarklet helpers run in the browser page where they are clicked. Campaign ID 
 
 :::details Purpose
 
-Campaign Counter imports Monday XLSX exports locally and shows used Campaign ID numbers by range:
-
-- Regular `0001-0999`
-- `1000-1999`
-- `2000-2999`
-- `3000-3999`
-- `4000-4999`
-- `5000-5999`
-- `6000-6999`
-- `7000-7999`
-- `8000-8999`
-- `9000-9999`
+Campaign Counter stores the current Campaign ID, activity, folder scans, and JSON backups locally in this browser.
 :::
 
 :::details Workflow
 
-- Export XLSX from Monday.
-- Import XLSX into Campaign Counter.
-- Review used IDs in the selected series tab.
-- Hover or open a used ID to see campaign names, full campaign IDs, and blast dates.
-- Use Next / Back / Next free to choose an available number.
-- Use Reset only when you want to clear browser-local imported data.
+- Enter a name once, then use Generate, Back, or manual adjustment.
+- Scan a campaign folder to detect existing four-digit IDs and conflicts.
+- Export a JSON backup before moving to another browser or clearing data.
+- Import a JSON backup and choose Replace or Merge.
+- Use Reset only when you want to clear the saved folder scan.
 :::
 
 :::details Reblast behavior
 
-The same campaign number can appear multiple times for reblast scenarios. Campaign Counter groups duplicate numbers and shows all related campaign names/dates in the details view.
+The same campaign number can appear multiple times for reblast scenarios. Folder scanning groups duplicate numbers and shows all related campaign names, dates, and managers in the details view.
 :::
 
 :::details Storage
 
-Imported XLSX data is stored in this browser only. It is not uploaded to Supabase or another third-party service.
+Campaign Counter data is stored in this browser only. It is not uploaded to Supabase or another third-party service.
 :::
 
 ## Config eDM
@@ -165,7 +153,7 @@ Layout Checker loads or accepts HTML source, detects KRHRED placeholders, applie
 
 :::details Network behavior
 
-Remote layout URLs are not requested. Use a local HTML file or paste the source instead.
+If a layout URL is used, the tool may request the layout directly. If direct browser access is blocked and proxy fallback is enabled, it may try proxy services. Disable external checks or proxy fallback in Docs when working with restricted material.
 :::
 
 ## Layout Slicer
@@ -244,7 +232,7 @@ Use Replace PDF link when an existing public PDF URL must be replaced. Paste the
 
 :::details Live check behavior
 
-Link checking is disabled to prevent URLs from being sent to external services. Use Open for manual verification.
+Check only verifies whether a generated public PDF link appears reachable. It does not upload the PDF. If direct browser check fails and proxy fallback is enabled, it may use a proxy check. Disable proxy fallback if that is not allowed.
 :::
 
 ## WFH Tracker
@@ -271,9 +259,9 @@ WFH Tracker marks WFH/WFO days on a monthly calendar and shows a compact monthly
 - Weekend: grey.
 :::
 
-:::details Holiday auto-sync
+:::details Holiday data
 
-WFH Tracker starts with local fallback holiday data. If holiday auto-sync is enabled, it fetches public Indonesian holiday/cuti bersama data for the visible year and caches it locally. It does not send personal WFH/WFO marks.
+WFH Tracker uses the built-in Indonesian holiday and cuti bersama data. It does not fetch external holiday data or send personal WFH/WFO marks.
 :::
 
 ## Release Workflow
@@ -294,7 +282,7 @@ Tool headers show a small privacy label:
 
 - **Local only** means data stays in browser/file handles unless you save/export it yourself.
 - **External optional** means the tool can fetch a public URL only when you use that feature and external checks are enabled.
-- **Holiday sync optional** means WFH Tracker can fetch public Indonesian holiday data by year.
+- **Local holiday data** means WFH Tracker uses the built-in holiday list in the browser.
 :::
 
 :::details Checklist
@@ -370,7 +358,7 @@ Browser checks may be blocked even when the link is valid. Use Open to verify ma
 
 :::details WFH holiday data looks stale
 
-The tracker caches holiday data per year. Disable/enable holiday auto-sync or clear browser storage if you need a fresh fetch immediately.
+The tracker uses the built-in holiday list. Update the local holiday list in the tool source when a new year needs to be added.
 :::
 
 ## Credits & Dedication

@@ -28,8 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
-    const HOLIDAY_CACHE_PREFIX = 'edm-helper:holidays:';
-    const HOLIDAY_CACHE_MAX_AGE = 1000 * 60 * 60 * 24 * 7;
 
     // Local fallback keeps the calendar usable when the public source is slow or unavailable.
     const defaultHolidays = {
@@ -112,88 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
       holidaySyncStatus.dataset.state = state;
     }
 
-    function normalizeHolidayName(holiday) {
-      const name = holiday?.name || holiday?.summary || holiday?.title || holiday?.description || 'Hari Libur';
-      const type = String(holiday?.type || '').toLowerCase();
-      const isLeave = type === 'leave' || holiday?.is_leave === true || /cuti/i.test(name);
-      return isLeave && !/cuti/i.test(name) ? `Cuti Bersama - ${name}` : name;
-    }
-
-    function extractHolidayItems(payload) {
-      if (Array.isArray(payload)) return payload;
-      if (Array.isArray(payload?.data)) return payload.data;
-      if (Array.isArray(payload?.holidays)) return payload.holidays;
-      if (Array.isArray(payload?.holiday_list)) {
-        return payload.holiday_list.map((name) => ({ date: payload.date, name }));
-      }
-      return [];
-    }
-
-    function normalizeHolidayMap(payload) {
-      const map = {};
-      extractHolidayItems(payload).forEach((holiday) => {
-        const date = holiday?.date || holiday?.tanggal;
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date))) return;
-        const name = normalizeHolidayName(holiday);
-        map[date] = map[date] ? `${map[date]} / ${name}` : name;
-      });
-      return map;
-    }
-
-    function getCachedHolidayMap(year) {
-      try {
-        const cached = JSON.parse(localStorage.getItem(`${HOLIDAY_CACHE_PREFIX}${year}`) || 'null');
-        if (!cached || !cached.updatedAt || !cached.data) return null;
-        if (Date.now() - cached.updatedAt > HOLIDAY_CACHE_MAX_AGE) return null;
-        return cached.data;
-      } catch {
-        return null;
-      }
-    }
-
-    function setCachedHolidayMap(year, data) {
-      try {
-        localStorage.setItem(`${HOLIDAY_CACHE_PREFIX}${year}`, JSON.stringify({
-          updatedAt: Date.now(),
-          data
-        }));
-      } catch {
-        // Cache is optional. Private browsing or storage limits should not break the calendar.
-      }
-    }
-
-    async function fetchHolidayMap(year) {
-      return {};
-    }
-
-    async function loadHolidayData(year) {
-      if (window.EDM_PRIVACY?.get?.('holidaySync') === false) {
-        setHolidaySyncStatus('Holiday source: local data only', 'neutral');
-        return;
-      }
-
-      const cached = getCachedHolidayMap(year);
-      if (cached) {
-        window.holidays = { ...defaultHolidays, ...cached };
-        setHolidaySyncStatus(`Holiday source: cached ${year}`, 'success');
-      } else {
-        setHolidaySyncStatus(`Holiday source: local data ${year}`, 'success');
-      }
-
-      try {
-        const remoteHolidays = await fetchHolidayMap(year);
-        if (Object.keys(remoteHolidays).length) {
-          setCachedHolidayMap(year, remoteHolidays);
-          window.holidays = { ...defaultHolidays, ...remoteHolidays };
-           setHolidaySyncStatus(`Holiday source: local data ${year}`, 'success');
-          if (currentYear === year) renderCalendar(currentMonth, currentYear);
-        }
-      } catch (error) {
-        if (!cached) {
-          setHolidaySyncStatus('Holiday source: local fallback', 'error');
-        }
-      }
-    }
+    setHolidaySyncStatus('Holiday source: local data only', 'neutral');
 
     function createStars() {
       // Reduced star count for better performance
@@ -567,7 +484,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentYear--;
       }
       renderCalendar(currentMonth, currentYear);
-      loadHolidayData(currentYear);
       clearHolidayDescription();
     });
 
@@ -578,7 +494,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentYear++;
       }
       renderCalendar(currentMonth, currentYear);
-      loadHolidayData(currentYear);
       clearHolidayDescription();
     });
 
@@ -588,7 +503,6 @@ document.addEventListener('DOMContentLoaded', () => {
       currentMonth = today.getMonth();
       currentYear = today.getFullYear();
       renderCalendar(currentMonth, currentYear);
-      loadHolidayData(currentYear);
       clearHolidayDescription();
     });
 
@@ -604,5 +518,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearHolidayDescription();
     renderCalendar(currentMonth, currentYear);
-    loadHolidayData(currentYear);
 });

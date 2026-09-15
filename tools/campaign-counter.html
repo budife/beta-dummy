@@ -16,13 +16,14 @@
   <!-- CSS -->
   <link rel="stylesheet" href="../css/tokens.css?v=6.16.20">
   <link rel="stylesheet" href="../css/theme.css?v=6.16.20">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="../css/pages-campaign-counter.css?v=6.16.20">
+ <link rel="stylesheet" href="../css/pages-campaign-counter.css?v=1.7.0">
   <link rel="stylesheet" href="../css/controls.css?v=6.16.20">
   
   <title>Campaign Counter - BETA</title>
   <meta name="theme-color" content="#0f172a" />
   <!-- Font Awesome - Non-blocking load -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
   
 </head>
 <body>
@@ -34,7 +35,7 @@
             <section class="counter-card counter-summary" aria-labelledby="last-campaign-label">
               <div class="counter-summary-top">
                 <p class="counter-summary-label" id="last-campaign-label">Last Campaign</p>
-                <span class="counter-connection-status" id="counter-connection-status" role="status">Connecting</span>
+              <span class="counter-connection-status" id="counter-connection-status" role="status">Saved locally</span>
               </div>
               <div class="counter-last-row">
                 <output class="counter-last-id" id="counter-last-id">----</output>
@@ -60,7 +61,7 @@
                   <i class="fa-solid fa-plus" aria-hidden="true"></i> Generate Campaign ID
                 </button>
               </div>
-              <p class="counter-message" id="counter-message" role="status" aria-live="polite">Using local browser storage...</p>
+              <p class="counter-message" id="counter-message" role="status" aria-live="polite">Campaign Counter data is saved locally.</p>
             </section>
 
             <section class="counter-card counter-activity" aria-labelledby="recent-activity-title">
@@ -80,8 +81,14 @@
                   <button class="counter-folder-btn" id="pick-folder" type="button">
                     <i class="fa-solid fa-folder-open" aria-hidden="true"></i> <span id="folder-btn-label">Scan Folder</span>
                   </button>
-                  <button class="counter-folder-btn" id="refresh-folder" type="button" title="Refresh local folder scans">
+                  <button class="counter-folder-btn" id="refresh-folder" type="button" title="Reload local data">
                     <i class="fa-solid fa-rotate" aria-hidden="true"></i> <span>Refresh</span>
+                  </button>
+                  <button class="counter-folder-btn" id="export-backup" type="button" title="Export JSON backup">
+                    <i class="fa-solid fa-download" aria-hidden="true"></i> <span>Export</span>
+                  </button>
+                  <button class="counter-folder-btn" id="import-backup" type="button" title="Import JSON backup">
+                    <i class="fa-solid fa-upload" aria-hidden="true"></i> <span>Import</span>
                   </button>
                   <button class="counter-folder-btn counter-folder-btn--reset" id="reset-folder" type="button">
                     <i class="fa-solid fa-trash" aria-hidden="true"></i> <span>Reset</span>
@@ -149,9 +156,10 @@
   </footer>
 
   <div id="tooltip-portal" aria-hidden="true"></div>
-  <script src="../js/footer.js?v=6.16.20" defer></script>
-  <script src="../js/version-config.js?v=6.16.20" defer></script>
+  <input id="import-backup-input" type="file" accept="application/json,.json" hidden>
+  <script src="../js/footer.js?v=6.16.19" defer></script>
+  <script src="../js/version-config.js?v=6.16.19" defer></script>
   <script src="../js/campaign-counter-local.js?v=6.16.20" defer></script>
-  <script src="../js/pages-campaign-counter.js?v=6.16.20" defer></script>
+  <script src="../js/pages-campaign-counter.js?v=1.7.0" defer></script>
 </body>
 </html>

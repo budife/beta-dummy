@@ -1418,7 +1418,59 @@ class DatabaseChecker {
   }
 
   async fetchRemoteLayoutTemplate(url, externalSignal = null) {
-    throw new Error('Remote layout checks are disabled. Select a local file or paste HTML instead.');
+    if (window.EDM_PRIVACY?.get?.('externalChecks') === false) {
+      throw new Error('External URL checks are disabled in Documentation privacy settings.');
+    }
+
+    const cleanUrl = url.replace(/^https?:\/\//, '');
+    const directAttempt = { url, via: 'direct' };
+    const proxyAttempts = [
+      { url: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, via: 'AllOrigins', json: true },
+      { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, via: 'CodeTabs' },
+      { url: `https://r.jina.ai/http://${cleanUrl}`, via: 'Jina HTTP' },
+      { url: `https://r.jina.ai/https://${cleanUrl}`, via: 'Jina HTTPS' },
+      { url: `https://corsproxy.io/?${encodeURIComponent(url)}`, via: 'CorsProxy' },
+      { url: `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, via: 'AllOrigins Raw' },
+      { url: `https://thingproxy.freeboard.io/fetch/${url}`, via: 'ThingProxy' },
+      { url: `https://cors-anywhere.herokuapp.com/${url}`, via: 'CORS Anywhere' }
+    ];
+    const attempts = window.EDM_PRIVACY?.get?.('proxyFallbacks') === false
+      ? [directAttempt]
+      : [directAttempt, ...proxyAttempts];
+    const controllers = [];
+    const fetchAttempt = async (attempt) => {
+      const controller = new AbortController();
+      controllers.push(controller);
+      const abortFromExternal = () => controller.abort();
+      externalSignal?.addEventListener('abort', abortFromExternal, { once: true });
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+      try {
+        const response = await fetch(attempt.url, {
+          signal: controller.signal,
+          headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const html = attempt.json
+          ? (await response.json()).contents || ''
+          : await response.text();
+        if (!/<html|<!doctype/i.test(html)) throw new Error('Response is not an HTML document.');
+        return { html, via: attempt.via };
+      } finally {
+        clearTimeout(timeoutId);
+        externalSignal?.removeEventListener('abort', abortFromExternal);
+      }
+    };
+
+    try {
+      const result = await Promise.any(attempts.map(fetchAttempt));
+      controllers.forEach((controller) => controller.abort());
+      return result;
+    } catch (error) {
+      controllers.forEach((controller) => controller.abort());
+      if (externalSignal?.aborted) throw new DOMException('Fetch cancelled', 'AbortError');
+      const lastError = error.errors?.findLast?.((item) => item?.message) || error;
+      throw new Error(lastError?.message || 'all fetch attempts failed');
+    }
   }
 
   async runLayoutTest() {

@@ -54,7 +54,7 @@ See `STYLE-GUIDE.md` section "Release Hygiene" for the full checklist. Key items
 - eDM Helper is a static web application hosted on GitHub Pages.
 - Branch: `dev`.
 - Main technologies: vanilla HTML/CSS/JS, no build step.
-- Runtime integrations are local-only; no Supabase or external service is used.
+- Campaign Counter and WFH Tracker are browser-local; external URL checks remain an optional network feature.
 
 ## Communication
 

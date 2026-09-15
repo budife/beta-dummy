@@ -8,9 +8,7 @@
   const STORE_KEY = 'edm-helper-tnc-uploader-items-v1';
   const ACTIVITY_STORE_KEY = 'edm-helper-tnc-uploader-activity-v1';
   const MAX_ACTIVITY_ITEMS = 30;
-  const DEFAULT_PUBLIC_BASE_URL = 'https://mail.dummy.example/id/emailblast';
-  const DIRECT_LINK_CHECK_TIMEOUT_MS = 2500;
-  const PROXY_LINK_CHECK_TIMEOUT_MS = 6500;
+  const DEFAULT_PUBLIC_BASE_URL = 'https://mail.hsbc.com.hk/id/emailblast';
   const elements = {};
   const state = {
     items: [],
@@ -49,7 +47,6 @@
       'saveBtn',
       'statusText',
       'copyAllLinksBtn',
-      'checkAllBtn',
       'clearHistoryBtn',
       'fileCount',
       'fileList',
@@ -256,9 +253,6 @@
       size,
       lastModified,
       status,
-      httpStatus,
-      verifiedVia,
-      checkedAt,
       savedAt,
       downloadedAt,
       linkName,
@@ -272,9 +266,6 @@
       size,
       lastModified,
       status,
-      httpStatus,
-      verifiedVia,
-      checkedAt,
       savedAt,
       downloadedAt,
       linkName,
@@ -418,9 +409,6 @@
       size: file.size,
       lastModified: file.lastModified,
       status: 'queued',
-      httpStatus: '',
-      verifiedVia: '',
-      checkedAt: '',
       savedAt: '',
       downloadedAt: '',
     };
@@ -440,9 +428,6 @@
         targetPath: getTargetPath(),
         url: buildPublicUrl(targetName),
         status: keepStatus ? item.status : 'queued',
-        httpStatus: keepStatus ? item.httpStatus : '',
-        verifiedVia: keepStatus ? item.verifiedVia : '',
-        checkedAt: keepStatus ? item.checkedAt : '',
       };
     });
     saveHistory();
@@ -504,7 +489,7 @@
   }
 
   function renderDroppedList() {
-    const droppedItems = getFileBackedItems();
+    const droppedItems = state.items.filter((item) => item.file || item.status === 'queued');
     if (!droppedItems.length) {
       elements.droppedList.innerHTML = '<span>No dropped PDFs yet.</span>';
       return;
@@ -512,11 +497,14 @@
 
     elements.droppedList.innerHTML = `
       <strong>${droppedItems.length} dropped PDF${droppedItems.length === 1 ? '' : 's'}</strong>
-      <ul>
+      <ol>
         ${droppedItems.map((item) => `
-          <li title="${escapeHtml(item.originalName)}">${escapeHtml(item.originalName)}</li>
+          <li title="${escapeHtml(item.originalName)}">
+            <span>${escapeHtml(item.originalName)}</span>
+            ${item.file ? '' : '<small>(select again to save)</small>'}
+          </li>
         `).join('')}
-      </ul>
+      </ol>
     `;
   }
 
@@ -536,7 +524,6 @@
     const hasInvalidNames = hasInvalidQueuedNames();
     elements.saveBtn.disabled = !fileBackedCount || !state.directoryHandle || hasInvalidNames;
     elements.copyAllLinksBtn.disabled = !linkCount;
-    elements.checkAllBtn.disabled = !linkCount;
   }
 
   function getStatusLabel(item) {
@@ -544,28 +531,17 @@
       queued: 'Queued',
       saved: 'Saved',
       downloaded: 'Downloaded',
-      live: 'Live',
-      checking: 'Checking',
-      not_found: 'Not found',
-      cannot_verify: 'Cannot verify',
-      error: 'Error',
       history: 'History',
     };
     return labels[item.status] || 'Queued';
   }
 
   function getStatusClass(item) {
-    if (item.status === 'saved' || item.status === 'live') return 'is-live';
-    if (item.status === 'checking') return 'is-checking';
-    if (item.status === 'not_found') return 'is-not-found';
-    if (item.status === 'error' || item.status === 'cannot_verify') return 'is-error';
+    if (item.status === 'saved') return 'is-live';
     return '';
   }
 
   function getItemNote(item) {
-    if (item.status === 'live' && item.httpStatus) return `HTTP ${item.httpStatus} · checked ${formatTime(item.checkedAt)}`;
-    if (item.status === 'not_found') return `HTTP 404 · checked ${formatTime(item.checkedAt)}`;
-    if (item.status === 'cannot_verify') return `Browser could not verify · checked ${formatTime(item.checkedAt)}`;
     if (item.savedAt) return `Saved ${formatTime(item.savedAt)}`;
     if (item.downloadedAt) return `Downloaded ${formatTime(item.downloadedAt)}`;
     if (!item.file) return 'Stored history only. Drop the PDF again to save.';
@@ -573,10 +549,6 @@
   }
 
   function getItemNoteDisplay(item) {
-    const via = item.verifiedVia ? ` via ${item.verifiedVia}` : '';
-    if (item.status === 'live' && item.httpStatus) return `HTTP ${item.httpStatus}${via} - checked ${formatTime(item.checkedAt)}`;
-    if (item.status === 'not_found') return `HTTP 404${via} - checked ${formatTime(item.checkedAt)}`;
-    if (item.status === 'cannot_verify') return `Could not verify automatically - checked ${formatTime(item.checkedAt)}`;
     return getItemNote(item);
   }
 
@@ -645,7 +617,6 @@
           <div class="tnc-file-actions">
             <button class="tnc-file-action" type="button" data-action="copy" data-id="${escapeHtml(item.id)}">Copy link</button>
             <button class="tnc-file-action" type="button" data-action="open" data-id="${escapeHtml(item.id)}">Open</button>
-            <button class="tnc-file-action" type="button" data-action="check" data-id="${escapeHtml(item.id)}">Check</button>
             <button class="tnc-remove" type="button" data-action="remove" data-id="${escapeHtml(item.id)}" aria-label="Remove ${escapeHtml(item.originalName)}">
               <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
@@ -704,9 +675,6 @@
       item.targetPath = getTargetPath();
       item.url = buildPublicUrl(item.targetName);
       item.status = 'queued';
-      item.httpStatus = '';
-      item.verifiedVia = '';
-      item.checkedAt = '';
       addActivity('Filename updated', `${item.originalName} -> ${item.targetName}`);
       setStatus('Final filename updated.', 'success');
     } else {
@@ -870,156 +838,6 @@
     window.open(item.url, '_blank', 'noopener,noreferrer');
   }
 
-  function createTimeoutSignal(timeoutMs) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-    return { controller, timeoutId };
-  }
-
-  async function fetchWithTimeout(url, options = {}, timeoutMs = PROXY_LINK_CHECK_TIMEOUT_MS) {
-    const { controller, timeoutId } = createTimeoutSignal(timeoutMs);
-    try {
-      return await fetch(url, {
-        ...options,
-        signal: controller.signal,
-        cache: options.cache || 'no-store',
-      });
-    } finally {
-      clearTimeout(timeoutId);
-    }
-  }
-
-  function getProxyAttempts(url) {
-    return [];
-  }
-
-  async function verifyProxyAttempt(attempt) {
-    const response = await fetchWithTimeout(attempt.url, { method: 'GET' });
-    if (!response.ok && response.status !== 404) {
-      throw new Error(`${attempt.via} returned HTTP ${response.status}`);
-    }
-
-    if (attempt.json) {
-      const data = await response.json();
-      const contents = String(data?.contents || '');
-      if (response.ok && contents) {
-        return { ok: true, status: response.status, via: attempt.via };
-      }
-      throw new Error(`${attempt.via} returned an empty response`);
-    }
-
-    return {
-      ok: response.ok,
-      status: response.status,
-      via: attempt.via,
-    };
-  }
-
-  async function verifyLink(url) {
-    return {
-      ok: false,
-      status: '',
-      via: '',
-      cannotVerify: true,
-      disabled: true,
-    };
-    /*
-    if (window.EDM_PRIVACY?.get?.('externalChecks') === false) {
-      return {
-        ok: false,
-        status: '',
-        via: '',
-        cannotVerify: true,
-        disabled: true,
-      };
-    }
-
-    try {
-      const response = await fetchWithTimeout(url, {
-        method: 'HEAD',
-        cache: 'no-store',
-      }, DIRECT_LINK_CHECK_TIMEOUT_MS);
-
-      if (response.ok || response.status === 404) {
-        return {
-          ok: response.ok,
-          status: response.status,
-          via: 'Direct',
-        };
-      }
-    } catch (error) {
-      console.warn('Direct HEAD check failed.', error);
-    }
-
-    if (window.EDM_PRIVACY?.get?.('proxyFallbacks') === false) {
-      return {
-        ok: false,
-        status: '',
-        via: '',
-        cannotVerify: true,
-      };
-    }
-
-    try {
-      return await Promise.any(getProxyAttempts(url).map(verifyProxyAttempt));
-    } catch (error) {
-      console.warn('Proxy link checks failed.', error);
-    }
-
-    return {
-      ok: false,
-      status: '',
-      via: '',
-      cannotVerify: true,
-    };
-    */
-  }
-
-  async function checkItemLink(id) {
-    const item = findItem(id);
-    if (!item?.url) return;
-
-    item.status = 'checking';
-    item.httpStatus = '';
-    item.verifiedVia = '';
-    renderItems();
-
-    const result = await verifyLink(item.url);
-    item.httpStatus = result.status ? String(result.status) : '';
-    item.verifiedVia = result.via || '';
-    item.checkedAt = new Date().toISOString();
-
-    if (result.ok) {
-      item.status = 'live';
-      const via = result.via && result.via !== 'Direct' ? ` via ${result.via}` : '';
-      setStatus(`${item.targetName} is live${via}.`, 'success');
-    } else if (result.status === 404) {
-      item.status = 'not_found';
-      setStatus(`${item.targetName} was not found online.`, 'error');
-    } else if (result.cannotVerify) {
-      item.status = 'cannot_verify';
-      setStatus(result.disabled
-        ? 'External URL checks are disabled in Documentation privacy settings.'
-        : 'Automatic check was blocked. Use Open to verify manually.', 'error');
-    } else {
-      item.status = 'error';
-      setStatus(`${item.targetName} returned HTTP ${result.status || 'unknown'}.`, 'error');
-    }
-
-    saveHistory();
-    renderItems();
-    const httpDetail = item.httpStatus ? `HTTP ${item.httpStatus}` : getStatusLabel(item);
-    const checker = item.verifiedVia ? ` via ${item.verifiedVia}` : '';
-    addActivity('Link checked', `${item.targetName}: ${httpDetail}${checker}`);
-  }
-
-  async function checkAllLinks() {
-    const items = getLinkItems();
-    for (const item of items) {
-      await checkItemLink(item.id);
-    }
-  }
-
   function renderReplaceMode() {
     const isReplace = state.mode === 'replace';
     elements.normalModeBtn.classList.toggle('is-active', !isReplace);
@@ -1128,7 +946,6 @@
     });
     elements.saveBtn.addEventListener('click', saveFiles);
     elements.copyAllLinksBtn.addEventListener('click', copyAllLinks);
-    elements.checkAllBtn.addEventListener('click', checkAllLinks);
     elements.normalModeBtn.addEventListener('click', () => setUploadMode('normal'));
     elements.replaceModeBtn.addEventListener('click', () => setUploadMode('replace'));
     elements.replaceLinkInput.addEventListener('input', applyReplaceLink);
@@ -1141,7 +958,11 @@
       }
     });
 
-    elements.fileInput.addEventListener('change', (event) => addFiles(event.target.files));
+    elements.fileInput.addEventListener('change', (event) => {
+      const files = Array.from(event.target.files || []);
+      event.target.value = '';
+      addFiles(files);
+    });
 
     ['dragenter', 'dragover'].forEach((eventName) => {
       elements.dropZone.addEventListener(eventName, (event) => {
@@ -1167,7 +988,6 @@
       if (action === 'rename-start') startRenameItem(id);
       if (action === 'copy') copyText(findItem(id)?.url || '');
       if (action === 'open') openItemLink(id);
-      if (action === 'check') checkItemLink(id);
       if (action === 'remove') removeItem(id);
     });
 

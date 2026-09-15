@@ -1,7 +1,7 @@
-const campaignRegistryService = window.CampaignRegistryService;
+const campaignRegistryService = window.CampaignCounterLocalStore;
 
-let username = localStorage.getItem('edm_username') || '';
-let connected = false;
+let username = localStorage.getItem('edm_username') || 'Local user';
+let connected = true;
 let generating = false;
 let currentCampaignId = 0;
 const GENERATED_FROM_POINTER_NOTE = 'Generated from active counter';
@@ -243,21 +243,8 @@ async function scanFolder() {
     updateConflictState();
     renderActivity(lastRenderedActivity);
 
-    // Save only the newly found IDs to local browser storage.
-    if (connected && username && newEntries.length) {
-      try {
-        const saved = await campaignRegistryService.saveFolderScan(username, dirHandle.name, newEntries);
-        const savedCount = Number.isFinite(Number(saved)) ? Number(saved) : newCount;
-        setMessage(`${savedCount} new campaign ID(s) saved locally.`, 'success');
-      } catch (e) {
-        console.warn('Folder scan backup failed', e);
-        setMessage(`${newCount} new campaign ID(s) found (backup failed).`, 'error');
-      }
-    } else if (connected && username) {
-      setMessage(`${skippedCount} campaign ID(s) already backed up — skipped.`, 'success');
-    } else {
-      setMessage(`${newCount} unique campaign ID(s) found.`, 'success');
-    }
+    if (newEntries.length) campaignRegistryService.saveFolderScans(dirHandle.name, newEntries);
+    setMessage(`${newCount} unique campaign ID(s) found and saved locally.`, 'success');
   } catch (error) {
     if (error.name !== 'AbortError') {
       setMessage('Unable to read folder. Please try again.', 'error');
@@ -274,9 +261,7 @@ async function resetFolderScans() {
     return;
   }
   try {
-    if (connected && username) {
-      await campaignRegistryService.clearFolderScans(username);
-    }
+    campaignRegistryService.clearFolderScans();
     scannedFolderIds.clear();
     renderFolderList();
     updateConflictState();
@@ -293,10 +278,6 @@ async function resetFolderScans() {
 }
 
 async function refreshFolderScans() {
-  if (!connected) {
-    setMessage('Local Campaign Counter is unavailable.', 'error');
-    return;
-  }
   try {
     const scans = await campaignRegistryService.loadFolderScans();
     scannedFolderIds.clear();
@@ -338,15 +319,6 @@ function setMessage(message = '', type = '') {
 function getManualSetErrorMessage(error, candidateId) {
   console.error('Set Campaign ID failed', error);
   const message = String(error?.message || '').trim();
-  if (/campaign id .* already exists|duplicate key|unique constraint/i.test(message)) {
-    return `Campaign ID ${formatId(candidateId)} already exists.`;
-  }
-  if (error?.code === '42702' || /column reference .* is ambiguous/i.test(message)) {
-    return 'The local Campaign Counter could not apply this change.';
-  }
-  if (/unable to fetch|failed to fetch|network|connection/i.test(message)) {
-    return 'Unable to access local Campaign Counter storage.';
-  }
   if (/campaign id must be between|user name is required/i.test(message)) {
     return message;
   }
@@ -356,7 +328,7 @@ function getManualSetErrorMessage(error, candidateId) {
 function setConnectionStatus(isConnected) {
   const element = document.getElementById('counter-connection-status');
   if (!element) return;
-  element.textContent = isConnected ? 'Connected' : 'Offline';
+  element.textContent = isConnected ? 'Saved locally' : 'Unavailable';
   element.className = `counter-connection-status ${isConnected ? 'is-connected' : 'is-offline'}`;
 }
 
@@ -425,7 +397,7 @@ function renderActivity(items) {
 function updateGenerateButton() {
   const button = document.getElementById('generate-campaign');
   if (!button) return;
-  button.disabled = !connected || !username || generating;
+  button.disabled = generating;
   button.innerHTML = generating
     ? '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Generating...'
     : '<i class="fa-solid fa-plus" aria-hidden="true"></i> Generate Campaign ID';
@@ -433,32 +405,16 @@ function updateGenerateButton() {
 
 function updateEditButton() {
   const button = document.getElementById('edit-last-campaign');
-  if (button) button.disabled = !connected || !username || generating;
+  if (button) button.disabled = generating;
 
   const stepBack = document.getElementById('step-back-campaign');
-  if (stepBack) stepBack.disabled = !connected || !username || generating || currentCampaignId <= 1;
+  if (stepBack) stepBack.disabled = generating || currentCampaignId <= 0;
 }
 
 let unsubscribeCounter = null;
 let unsubscribeActivity = null;
 
 async function refreshDashboard() {
-  const connection = await campaignRegistryService.checkConnection();
-  connected = connection.connected;
-  setConnectionStatus(connected);
-  updateGenerateButton();
-  updateEditButton();
-
-  if (!connected) {
-    currentCampaignId = 0;
-    document.getElementById('counter-last-id').textContent = '----';
-    renderActivity([]);
-    setMessage(connection.reason === 'config'
-      ? 'Local Campaign Counter storage is unavailable.'
-      : 'Unable to load local Campaign Counter storage. Refresh and try again.', 'error');
-    return;
-  }
-
   try {
     const [counterValue, activity] = await Promise.all([
       campaignRegistryService.loadCounter(),
@@ -468,50 +424,28 @@ async function refreshDashboard() {
     const idEl = document.getElementById('counter-last-id');
     idEl.textContent = formatId(currentCampaignId);
 
-    // Load previous folder scans (best-effort — SQL migration may not exist yet)
-    try {
-      const scans = await campaignRegistryService.loadFolderScans();
-      scannedFolderIds.clear();
-      scans.forEach(row => {
-        const id = row.campaign_id;
-        if (!scannedFolderIds.has(id)) scannedFolderIds.set(id, []);
-        scannedFolderIds.get(id).push({
-          name: row.campaign_name,
-          date: row.folder_date,
-          manager: row.manager
-        });
-      });
-      renderFolderList();
-      // Restore last folder name from localStorage
-      const lastFolder = localStorage.getItem('edm_last_folder');
-      if (lastFolder) {
-        const btn = document.getElementById('pick-folder');
-        const label = document.getElementById('folder-btn-label');
-        if (btn) btn.classList.add('is-loaded');
-        if (label) label.textContent = lastFolder;
-      }
-    } catch (scanErr) {
-      console.warn('Folder scan backup not available:', scanErr.message);
+    const scans = await campaignRegistryService.loadFolderScans();
+    scannedFolderIds.clear();
+    scans.forEach(row => {
+      const id = row.campaign_id;
+      if (!scannedFolderIds.has(id)) scannedFolderIds.set(id, []);
+      scannedFolderIds.get(id).push({ name: row.campaign_name, date: row.folder_date, manager: row.manager });
+    });
+    renderFolderList();
+    const lastFolder = campaignRegistryService.load().lastFolderName;
+    if (lastFolder) {
+      document.getElementById('pick-folder')?.classList.add('is-loaded');
+      const label = document.getElementById('folder-btn-label');
+      if (label) label.textContent = lastFolder;
     }
 
     updateConflictState();
     updateEditButton();
     renderActivity(activity);
-    setMessage('Campaign Counter is using local browser storage.');
-    if (typeof campaignRegistryService.subscribeCounter === 'function' && !unsubscribeCounter) {
-      unsubscribeCounter = campaignRegistryService.subscribeCounter((value) => {
-        currentCampaignId = Number(value) || 0;
-        const idEl = document.getElementById('counter-last-id');
-        idEl.textContent = formatId(currentCampaignId);
-        updateConflictState();
-        updateEditButton();
-      });
-    }
-    if (typeof campaignRegistryService.subscribeActivity === 'function' && !unsubscribeActivity) {
-      unsubscribeActivity = campaignRegistryService.subscribeActivity(() => {
-        campaignRegistryService.loadRecentActivity().then(renderActivity);
-      });
-    }
+    connected = true;
+    setConnectionStatus(true);
+    updateGenerateButton();
+    setMessage('Campaign Counter data is saved locally.');
   } catch (error) {
     connected = false;
     currentCampaignId = 0;
@@ -519,7 +453,7 @@ async function refreshDashboard() {
     updateGenerateButton();
     updateEditButton();
     renderActivity([]);
-    setMessage('Unable to load Campaign Counter data. Please refresh and try again.', 'error');
+    setMessage('Unable to load local Campaign Counter data.', 'error');
   }
 }
 
@@ -554,7 +488,7 @@ function bindWelcomeDialog() {
 }
 
 function openManualDialog() {
-  if (!connected || !username || generating) return;
+  if (generating) return;
   const dialog = document.getElementById('manual-dialog');
   if (!dialog) return;
   document.getElementById('manual-current-id').textContent = formatId(currentCampaignId);
@@ -576,7 +510,7 @@ function bindManualDialog() {
   document.getElementById('manual-cancel')?.addEventListener('click', () => dialog.close());
   form.addEventListener('submit', async event => {
     event.preventDefault();
-    if (!connected || generating) return;
+    if (generating) return;
     const input = document.getElementById('manual-next-id');
     const error = document.getElementById('manual-error');
     const nextId = Number.parseInt(input.value.trim(), 10);
@@ -595,7 +529,7 @@ try {
       username,
       document.getElementById('manual-reason').value.trim()
     );
-    if (!result?.campaign_id) throw new Error('EMPTY_RESULT');
+    if (!result || !Number.isInteger(Number(result.campaign_id))) throw new Error('EMPTY_RESULT');
     dialog.close();
     currentCampaignId = Number(result.campaign_id) || 0;
     const idEl = document.getElementById('counter-last-id');
@@ -603,7 +537,7 @@ try {
     updateConflictState();
     updateEditButton();
     setMessage(`${formatId(currentCampaignId)} manually set.`, 'success');
-    // Only refresh activity, don't reset the local counter.
+    // Refresh activity without changing the locally stored counter.
     const activity = await campaignRegistryService.loadRecentActivity();
     renderActivity(activity);
   } catch (serviceError) {
@@ -618,14 +552,14 @@ try {
 }
 
 async function stepBackCampaign() {
-  if (!connected || !username || generating || currentCampaignId <= 1) return;
+  if (generating || currentCampaignId <= 0) return;
   generating = true;
   updateGenerateButton();
   updateEditButton();
   setMessage(`Setting Campaign ID to ${formatId(currentCampaignId - 1)}...`);
   try {
     const result = await campaignRegistryService.backCampaign(username);
-    if (!result?.campaign_id) throw new Error('EMPTY_RESULT');
+    if (!result || !Number.isInteger(Number(result.campaign_id))) throw new Error('EMPTY_RESULT');
     currentCampaignId = Number(result.campaign_id) || 0;
     document.getElementById('counter-last-id').textContent = formatId(currentCampaignId);
     updateConflictState();
@@ -641,7 +575,7 @@ async function stepBackCampaign() {
 }
 
 async function generateCampaign() {
-  if (!connected || !username || generating) return;
+  if (generating) return;
   const dateInput = document.getElementById('campaign-date-input');
   const nameInput = document.getElementById('campaign-name-input');
   const dateStamp = dateInput ? dateInput.value.trim() : '';
@@ -656,15 +590,24 @@ async function generateCampaign() {
     currentCampaignId = Number(result.campaign_id) || 0;
     const newId = formatId(currentCampaignId);
     const copiedId = buildCopiedId(currentCampaignId, campaignName, dateStamp);
-    await navigator.clipboard?.writeText(copiedId);
+    let copied = false;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(copiedId);
+        copied = true;
+      }
+    } catch (copyError) {
+      console.warn('Campaign ID copy failed:', copyError);
+    }
     document.getElementById('counter-last-id').textContent = newId;
+    renderActivity(await campaignRegistryService.loadRecentActivity());
     updateConflictState();
     updateEditButton();
     if (scannedFolderIds.has(newId)) {
       markConflict(newId);
-      setMessage(`${newId} generated and copied — conflict: folder already exists.`, 'error');
+      setMessage(`${newId} generated${copied ? ' and copied' : ''} — conflict: folder already exists.`, 'error');
     } else {
-      setMessage(`${copiedId} generated and copied.`, 'success');
+      setMessage(`${copiedId} generated${copied ? ' and copied' : ''}.`, 'success');
     }
   } catch (error) {
     setMessage('Unable to generate a Campaign ID. Please try again.', 'error');
@@ -672,6 +615,37 @@ async function generateCampaign() {
     generating = false;
     updateGenerateButton();
     updateEditButton();
+  }
+}
+
+function exportBackup() {
+  const payload = { ...campaignRegistryService.exportData(), exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `campaign-counter-backup-${formatDatestamp(new Date())}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+  setMessage('Local backup exported as JSON.', 'success');
+}
+
+async function importBackup(file) {
+  if (!file || file.size > 5 * 1024 * 1024) {
+    setMessage('Backup file must be a JSON file smaller than 5 MB.', 'error');
+    return;
+  }
+  try {
+    const payload = JSON.parse(await file.text());
+    if (!payload || payload.version !== campaignRegistryService.VERSION || !Array.isArray(payload.activity) || !Array.isArray(payload.folderScans)) {
+      throw new Error('Invalid or unsupported backup file.');
+    }
+    const mode = confirm('Replace current local data? Choose Cancel to merge the backup instead.') ? 'replace' : 'merge';
+    campaignRegistryService.importData(payload, mode);
+    await refreshDashboard();
+    setMessage(`Backup imported using ${mode} mode.`, 'success');
+  } catch (error) {
+    setMessage(error.message || 'Unable to import the JSON backup.', 'error');
   }
 }
 
@@ -683,6 +657,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('pick-folder')?.addEventListener('click', scanFolder);
   document.getElementById('reset-folder')?.addEventListener('click', resetFolderScans);
   document.getElementById('refresh-folder')?.addEventListener('click', refreshFolderScans);
+  document.getElementById('export-backup')?.addEventListener('click', exportBackup);
+  document.getElementById('import-backup')?.addEventListener('click', () => document.getElementById('import-backup-input')?.click());
+  document.getElementById('import-backup-input')?.addEventListener('change', event => {
+    importBackup(event.target.files?.[0]);
+    event.target.value = '';
+  });
 
   bindWelcomeDialog();
   bindManualDialog();

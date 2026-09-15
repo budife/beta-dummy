@@ -13,15 +13,16 @@
   <meta name="author" content="BETA">
   
   <!-- CSS -->
-  <link rel="stylesheet" href="../css/tokens.css?v=6.16.20">
-  <link rel="stylesheet" href="../css/theme.css?v=6.16.20">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="../css/pages-bookmarklet.css?v=6.16.20">
-  <link rel="stylesheet" href="../css/controls.css?v=6.16.20">
+  <link rel="stylesheet" href="../css/tokens.css?v=6.16.19">
+  <link rel="stylesheet" href="../css/theme.css?v=6.16.19">
+  <link rel="stylesheet" href="../css/pages-bookmarklet.css?v=6.16.19">
+  <link rel="stylesheet" href="../css/controls.css?v=6.16.19">
   
   <title>Bookmarklet - BETA</title>
   <meta name="theme-color" content="#0f172a" />
   <!-- Font Awesome - Non-blocking load -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
 </head>
 <body>
   <!-- Initial State Script - Removed -->
@@ -99,19 +100,19 @@
                 </a>
             </div>
 
-            <!-- Local to Dummy URL Converter -->
+            <!-- Local to HSBC URL Converter -->
             <div class="bookmarklet-card">
                 <div class="bookmarklet-header">
                     <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                    <h3>Local to Dummy URL</h3>
+                    <h3>Local to HSBC URL</h3>
                 </div>
-                <p>Convert localhost URL to dummy mail server</p>
-                 <a href="javascript:(function(){function showToast(msg,type){const toast=document.createElement('div');toast.style.cssText='position:fixed;top:20px;right:20px;background:#333;color:white;padding:12px 20px;border-radius:4px;z-index:10000;animation:slideIn 0.3s ease';toast.textContent=msg;document.body.appendChild(toast);setTimeout(()=>toast.remove(),3000);}const currentUrl=window.location.href;if(currentUrl.includes('127.0.0.1:5500')){const newUrl=currentUrl.replace('http://127.0.0.1:5500','https://mail.dummy.example/id');if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(newUrl).then(()=>{showToast('\u2705 URL copied!','success');}).catch(()=>{fallbackCopy(newUrl);});}else{fallbackCopy(newUrl);}function fallbackCopy(text){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');showToast('\u2705 URL copied!','success');}catch(err){console.error('Gagal menyalin:',err);prompt('Copy manual URL:',text);}document.body.removeChild(ta);}}else{showToast('\u274c URL tidak mengandung 127.0.0.1:5500','error');}const style=document.createElement('style');style.textContent='@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}';document.head.appendChild(style);})();">
+                <p>Convert localhost URL to HSBC mail server</p>
+                <a href="javascript:(function(){function showToast(msg,type){const toast=document.createElement('div');toast.style.cssText='position:fixed;top:20px;right:20px;background:#333;color:white;padding:12px 20px;border-radius:4px;z-index:10000;animation:slideIn 0.3s ease';toast.textContent=msg;document.body.appendChild(toast);setTimeout(()=>toast.remove(),3000);}const currentUrl=window.location.href;if(currentUrl.includes('127.0.0.1:5500')){const newUrl=currentUrl.replace('http://127.0.0.1:5500','https://mail.hsbc.com.hk/id');if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(newUrl).then(()=>{showToast('\u2705 URL copied!','success');}).catch(()=>{fallbackCopy(newUrl);});}else{fallbackCopy(newUrl);}function fallbackCopy(text){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');showToast('\u2705 URL copied!','success');}catch(err){console.error('Gagal menyalin:',err);prompt('Copy manual URL:',text);}document.body.removeChild(ta);}}else{showToast('\u274c URL tidak mengandung 127.0.0.1:5500','error');}const style=document.createElement('style');style.textContent='@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}';document.head.appendChild(style);})();"; 
                    class="bookmarklet-btn" 
                    draggable="true"
-              data-tool="Local to Dummy URL">
+                   data-tool="Local to HSBC URL">
                     <i class="fa-solid fa-play"></i>
-                    <span class="btn-text">Local to Dummy URL</span>
+                    <span class="btn-text">Local to HSBC URL</span>
                 </a>
             </div>
         </div>
@@ -185,7 +186,7 @@
   <div id="settings-container"></div>
 
 <script src="../js/footer.js" defer></script>
-  <script src="../js/version-config.js?v=6.16.20" defer></script>
+  <script src="../js/version-config.js?v=6.16.19" defer></script>
 <!-- All functionality in one inline script -->
 <script>
 // Search functionality

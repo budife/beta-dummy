@@ -1,6 +1,6 @@
 ---
 title: Campaign Counter
-description: Import Monday Campaign IDs locally and monitor every thousand-number range.
+description: Generate Campaign IDs locally, scan campaign folders, and manage JSON backups.
 icon: fa-solid fa-chart-line
 category: Tools
 status: stable

@@ -21,7 +21,7 @@ const TOOL_VERSIONS = {
   },
   'campaign-counter': {
     label: 'Campaign Counter',
-    version: '1.6.6',
+    version: '1.7.0',
     status: 'stable'
   },
   'config-edm': {
@@ -57,7 +57,7 @@ const TOOL_VERSIONS = {
   },
   'tnc-uploader': {
     label: 'TNC Uploader',
-    version: '0.3.11',
+    version: '0.3.13',
     status: 'stable'
   },
   'text-correction': {
@@ -67,7 +67,7 @@ const TOOL_VERSIONS = {
   },
   'wfh-tracker': {
     label: 'WFH Tracker',
-    version: '1.2.0',
+    version: '1.3.0',
     status: 'stable'
   },
   docs: {

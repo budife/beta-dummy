@@ -26,16 +26,16 @@ Internal deployment; server URL is environment-specific.
 | Layout Slicer | Beta | Slice flat JPG/PNG layouts into ordered image assets. |
 | DOCX to HTML | Stable | Convert DOCX files into upload-ready HTML directly in the browser. |
 | TNC Uploader | Beta | Rename, queue, save, and generate public links for PDF terms and conditions. |
-| WFH Tracker | Stable | Track WFH/WFO/cuti/libur days with optional holiday sync. |
+| WFH Tracker | Stable | Track WFH/WFO/cuti/libur days using built-in local holiday data. |
 
 ## Privacy Notes
 
 This project is designed for internal-style daily work and avoids sending sensitive data out by default.
 
 - Database files, generated campaign IDs, WFH marks, and most tool data stay in the browser or selected local folders.
-- External network access is not used by runtime features. Load remote material manually as a local file or pasted source.
+- External network access is optional for features such as layout URL fetching and proxy fallback.
 - DOCX to HTML loads Mammoth, JSZip, CodeMirror, and docx-preview from CDN assets; mirror these assets locally if the private server blocks outbound CDN access.
-- Campaign Counter uses browser-local storage for Campaign ID allocation and activity; the Monday bookmarklet remains browser-local.
+- Campaign Counter stores its counter, activity, folder scans, and JSON backups in the current browser only.
 - Review the source before using it with confidential work. The code is plain static web code and can be inspected directly in this repository.
 
 ## Run Locally

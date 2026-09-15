@@ -2,11 +2,38 @@
 
 All notable user-facing changes to BETA are tracked here.
 
-## Core v6.16.20 - 14 September 2026
+## Core and Tool Updates - 16 September 2026
 
-- Removed runtime external data integrations and moved Campaign Counter data to browser-local storage.
-- Replaced HSBC production link defaults and validators with the dummy `mail.dummy.example` domain while retaining CDN libraries.
-- Added `EXTERNAL-INTEGRATIONS.md` with replacement guidance and clarified local/CDN privacy badges.
+- Kept Campaign Counter Generate enabled after returning from another tool and made clipboard copying best-effort.
+- Removed TNC Uploader external PDF link checking and fallback proxy requests.
+- Fixed TNC Uploader queued-file rendering after local history restoration and after file selection.
+- Added numbered entries to the TNC Uploader dropped-file list.
+- Removed WFH Tracker holiday API requests and the holiday auto-sync privacy setting.
+- Restored the external layout-fetcher worker files and related external integration documentation state.
+
+## Core v6.16.20 - 15 September 2026
+
+- Updated every tool privacy badge to identify local processing, Supabase sharing, optional external checks, and CDN assets.
+
+## Campaign Counter v1.7.0 - 15 September 2026
+
+- Replaced Supabase counter, activity, and folder scan storage with browser-local storage.
+- Added JSON backup export and import with merge or replace mode.
+
+## TNC Uploader v0.3.12 - 15 September 2026
+
+- Removed external PDF link checking and proxy fallback requests.
+- Kept generated link copy and manual open actions available.
+
+## TNC Uploader v0.3.13 - 15 September 2026
+
+- Kept queued PDF names visible after local history is restored.
+- Clarified that a PDF must be selected again before it can be saved to a folder.
+
+## WFH Tracker v1.3.0 - 15 September 2026
+
+- Removed external holiday API requests and holiday cache handling.
+- WFH Tracker now uses built-in local holiday data only.
 
 ## Core v6.16.15 - 10 September 2026
 

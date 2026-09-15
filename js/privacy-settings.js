@@ -8,19 +8,14 @@
   const DEFINITIONS = {
     externalChecks: {
       label: 'Enable external URL checks',
-      description: 'Allows tools to fetch layout URLs, check PDF links, and open public HTTP/HTTPS resources.',
+      description: 'Allows tools to fetch public layout URLs and open public HTTP/HTTPS resources.',
       defaultValue: true
     },
     proxyFallbacks: {
-      label: 'Proxy fallback (disabled)',
-      description: 'Retained for old browser settings only. Proxy services are no longer used.',
-      defaultValue: false
-    },
-    holidaySync: {
-      label: 'Enable holiday auto-sync',
-      description: 'Allows WFH Tracker to request public Indonesian holiday data by year.',
+      label: 'Enable proxy fallback',
+      description: 'Allows fallback proxy services only when direct browser requests are blocked.',
       defaultValue: true
-    }
+    },
   };
 
   function getStorageKey(key) {

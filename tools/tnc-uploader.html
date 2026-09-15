@@ -9,14 +9,14 @@
   <meta name="keywords" content="edm, tnc, pdf, uploader, emailblast">
   <meta name="author" content="BETA">
 
-  <link rel="stylesheet" href="../css/tokens.css?v=6.16.20">
-  <link rel="stylesheet" href="../css/theme.css?v=6.16.20">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="../css/pages-tnc-uploader.css?v=6.16.20">
-  <link rel="stylesheet" href="../css/controls.css?v=6.16.20">
+  <link rel="stylesheet" href="../css/tokens.css?v=6.16.19">
+  <link rel="stylesheet" href="../css/theme.css?v=6.16.19">
+   <link rel="stylesheet" href="../css/pages-tnc-uploader.css?v=0.3.13">
+  <link rel="stylesheet" href="../css/controls.css?v=6.16.19">
 
   <title>TNC Uploader - BETA</title>
   <meta name="theme-color" content="#0f172a">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
   <header class="header" role="banner">
@@ -67,7 +67,7 @@
             <div class="tnc-replace-fields" id="replaceFields" hidden>
               <label class="tnc-field">
                 <span>Old PDF link</span>
-                <input id="replaceLinkInput" type="url" placeholder="https://mail.dummy.example/id/emailblast/MKT/2025/tnc/file.pdf">
+                <input id="replaceLinkInput" type="url" placeholder="https://mail.hsbc.com.hk/id/emailblast/MKT/2025/tnc/file.pdf">
               </label>
               <p class="tnc-replace-summary" id="replaceSummary">Paste an existing PDF link to reuse its folder and file name.</p>
             </div>
@@ -111,17 +111,13 @@
             <div>
               <span class="tnc-eyebrow">Dropped files</span>
               <h2 id="tnc-preview-title">PDF queue & saved files</h2>
-              <p>Each PDF keeps its generated link and save/check status locally.</p>
+              <p>Each PDF keeps its generated link and save status locally.</p>
             </div>
             <div class="tnc-preview-actions">
               <span class="tnc-count" id="fileCount">0 files</span>
               <button class="tnc-button tnc-button-secondary" type="button" id="copyAllLinksBtn" disabled>
                 <i class="fa-solid fa-copy" aria-hidden="true"></i>
                 Copy links
-              </button>
-              <button class="tnc-button tnc-button-secondary" type="button" id="checkAllBtn" disabled>
-                <i class="fa-solid fa-link" aria-hidden="true"></i>
-                Check all
               </button>
               <button class="tnc-button tnc-button-secondary" type="button" id="clearHistoryBtn">
                 <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
@@ -166,8 +162,8 @@
   </footer>
 
   <script src="../js/footer.js" defer></script>
-  <script src="../js/version-config.js?v=6.16.20" defer></script>
-  <script src="../js/privacy-settings.js?v=6.16.20" defer></script>
-  <script src="../js/pages-tnc-uploader.js?v=6.16.16" defer></script>
+  <script src="../js/version-config.js?v=6.16.19" defer></script>
+  <script src="../js/privacy-settings.js?v=6.16.19" defer></script>
+  <script src="../js/pages-tnc-uploader.js?v=0.3.13" defer></script>
 </body>
 </html>

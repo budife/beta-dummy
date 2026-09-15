@@ -1,94 +1,146 @@
 (function (root, factory) {
-  root.CampaignRegistryService = factory(root);
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.CampaignCounterLocalStore = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const STORAGE_KEY = 'edm-helper:campaign-counter';
-  const ACTIVITY_KEY = 'edm-helper:campaign-counter-activity';
-  const FOLDER_KEY = 'edm-helper:campaign-counter-folders';
+  const VERSION = 1;
+  const MAX_ACTIVITY = 200;
 
-  function read(key, fallback) {
-    try { return JSON.parse(root.localStorage.getItem(key) || JSON.stringify(fallback)); }
-    catch { return fallback; }
+  function createInitialState() {
+    return {
+      version: VERSION,
+      currentCampaignId: 0,
+      activity: [],
+      folderScans: [],
+      lastFolderName: '',
+      updatedAt: null
+    };
   }
 
-  function write(key, value) { root.localStorage.setItem(key, JSON.stringify(value)); }
-
-  async function loadCounter() {
-    return Number(read(STORAGE_KEY, { currentValue: 0 }).currentValue) || 0;
+  function normalizeId(value) {
+    const id = Number.parseInt(value, 10);
+    return Number.isInteger(id) && id >= 0 && id <= 9999 ? id : 0;
   }
 
-  async function loadLastCampaign() {
-    return read(ACTIVITY_KEY, [])[0] || null;
+  function normalizeState(value) {
+    const state = value && typeof value === 'object' ? value : {};
+    return {
+      ...createInitialState(),
+      ...state,
+      version: VERSION,
+      currentCampaignId: normalizeId(state.currentCampaignId),
+      activity: Array.isArray(state.activity) ? state.activity.slice(0, MAX_ACTIVITY) : [],
+      folderScans: Array.isArray(state.folderScans) ? state.folderScans : [],
+      lastFolderName: typeof state.lastFolderName === 'string' ? state.lastFolderName : ''
+    };
   }
 
-  async function checkConnection() {
-    return { connected: true };
+  function read() {
+    try {
+      return normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'));
+    } catch {
+      return createInitialState();
+    }
   }
 
-  async function loadRecentActivity() {
-    return read(ACTIVITY_KEY, []).slice(0, 20);
+  function write(state) {
+    const next = normalizeState({ ...state, updatedAt: new Date().toISOString() });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    return next;
   }
 
-  async function generateCampaign(username, dateStamp, campaignName) {
-    const current = await loadCounter();
-    const campaign_id = Math.min(current + 1, 9999);
-    const result = { campaign_id, generated_by: username, generated_at: new Date().toISOString(), action: 'generated', full_id: `${dateStamp}_${campaignName || 'nama-campaign'}_${String(campaign_id).padStart(4, '0')}` };
-    write(STORAGE_KEY, { currentValue: campaign_id });
-    write(ACTIVITY_KEY, [result, ...read(ACTIVITY_KEY, [])].slice(0, 100));
-    return result;
+  function addActivity(state, item) {
+    state.activity = [
+      { id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, ...item },
+      ...state.activity
+    ].slice(0, MAX_ACTIVITY);
   }
 
-  async function backCampaign(username) {
-    const campaign_id = Math.max((await loadCounter()) - 1, 1);
-    write(STORAGE_KEY, { currentValue: campaign_id });
-    return { campaign_id };
+  function updateCounter(id, item) {
+    const state = read();
+    state.currentCampaignId = normalizeId(id);
+    addActivity(state, {
+      campaign_id: state.currentCampaignId,
+      generated_at: new Date().toISOString(),
+      generated_by: item.generated_by || 'Local user',
+      action: item.action || 'manual_set',
+      note: item.note || '',
+      full_id: item.full_id || ''
+    });
+    return write(state);
   }
 
-  async function setNextCampaignId(nextCampaignId, username, note) {
-    const campaign_id = Number(nextCampaignId);
-    write(STORAGE_KEY, { currentValue: campaign_id });
-    write(ACTIVITY_KEY, [{ campaign_id, generated_by: username, generated_at: new Date().toISOString(), action: 'manual_set', note: note || '' }, ...read(ACTIVITY_KEY, [])].slice(0, 100));
-    return { campaign_id };
-  }
-
-  function subscribeCounter(onChange) {
-    const handler = () => loadCounter().then(onChange);
-    root.addEventListener('storage', handler);
-    return () => root.removeEventListener('storage', handler);
-  }
-
-  function subscribeActivity(onInsert) {
-    const handler = () => onInsert(read(ACTIVITY_KEY, [])[0]);
-    root.addEventListener('storage', handler);
-    return () => root.removeEventListener('storage', handler);
-  }
-
-  async function saveFolderScan(scannedBy, folderName, entries) {
-    const existing = read(FOLDER_KEY, []);
-    write(FOLDER_KEY, [...existing, ...entries.map(entry => ({ ...entry, scanned_by: scannedBy, folder_name: folderName }))]);
-    return entries.length;
-  }
-
-  async function loadFolderScans() {
-    return read(FOLDER_KEY, []);
-  }
-
-  async function clearFolderScans(scannedBy) {
-    write(FOLDER_KEY, read(FOLDER_KEY, []).filter(entry => entry.scanned_by !== scannedBy));
-    return true;
+  function importData(payload, mode) {
+    const imported = normalizeState(payload);
+    if (mode === 'replace') return write(imported);
+    const current = read();
+    const activity = [...current.activity, ...imported.activity]
+      .filter((item, index, list) => item.id && list.findIndex(other => other.id === item.id) === index)
+      .sort((a, b) => String(b.generated_at).localeCompare(String(a.generated_at)))
+      .slice(0, MAX_ACTIVITY);
+    const folderScans = [...current.folderScans, ...imported.folderScans]
+      .filter((item, index, list) => {
+        const key = `${item.campaign_id}|${item.folder_date}|${item.campaign_name}|${item.manager}`;
+        return list.findIndex(other => `${other.campaign_id}|${other.folder_date}|${other.campaign_name}|${other.manager}` === key) === index;
+      });
+    return write({
+      ...current,
+      currentCampaignId: Math.max(current.currentCampaignId, imported.currentCampaignId),
+      activity,
+      folderScans,
+      lastFolderName: imported.lastFolderName || current.lastFolderName
+    });
   }
 
   return {
-    checkConnection,
-    loadLastCampaign,
-    loadCounter,
-    loadRecentActivity,
-    generateCampaign,
-    backCampaign,
-    setNextCampaignId,
-    subscribeCounter,
-    subscribeActivity,
-    saveFolderScan,
-    loadFolderScans,
-    clearFolderScans
+    STORAGE_KEY,
+    VERSION,
+    load: read,
+    checkConnection: async () => ({ connected: true }),
+    loadCounter: async () => read().currentCampaignId,
+    loadRecentActivity: async () => read().activity,
+    generateCampaign: async (username, dateStamp, campaignName) => {
+      const nextId = Math.min(read().currentCampaignId + 1, 9999);
+      const stamp = dateStamp || new Date().toISOString().slice(0, 10).replaceAll('-', '');
+      const slug = String(campaignName || 'nama-campaign').trim().replace(/\s+/g, '') || 'nama-campaign';
+      const result = { campaign_id: nextId, full_id: `${stamp}_${slug}_${String(nextId).padStart(4, '0')}` };
+      updateCounter(nextId, { generated_by: username, action: 'generate', full_id: result.full_id });
+      return result;
+    },
+    backCampaign: async username => {
+      const nextId = Math.max(read().currentCampaignId - 1, 0);
+      updateCounter(nextId, { generated_by: username, action: 'back', note: 'Moved counter back by one' });
+      return { campaign_id: nextId };
+    },
+    setNextCampaignId: async (nextId, username, note) => {
+      const id = normalizeId(nextId);
+      if (id < 1) throw new Error('Campaign ID must be between 0001 and 9999.');
+      updateCounter(id, { generated_by: username, action: 'manual_set', note });
+      return { campaign_id: id };
+    },
+    setCounter: updateCounter,
+    saveFolderScans(folderName, entries) {
+      const state = read();
+      const existing = new Set(state.folderScans.map(item => `${item.campaign_id}|${item.folder_date}|${item.campaign_name}|${item.manager}`));
+      entries.forEach(entry => {
+        const key = `${entry.campaign_id}|${entry.folder_date}|${entry.campaign_name}|${entry.manager}`;
+        if (!existing.has(key)) state.folderScans.push(entry);
+      });
+      state.lastFolderName = folderName || state.lastFolderName;
+      return write(state);
+    },
+    loadFolderScans: async () => read().folderScans,
+    clearFolderScans() {
+      const state = read();
+      state.folderScans = [];
+      state.lastFolderName = '';
+      return write(state);
+    },
+    importData,
+    exportData: read,
+    reset() {
+      return write(createInitialState());
+    }
   };
 });
