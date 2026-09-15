@@ -337,11 +337,24 @@ Stable tools show a small subtle badge in the tool header. Beta tools show a cle
 
 :::details Header privacy labels
 
-Tool headers show a small privacy label:
+Tool headers show a privacy label explaining where the tool's data is processed and whether an optional network path exists. The label describes capability, not an automatic upload.
 
-- **Local only** means data stays in browser/file handles unless you save/export it yourself.
-- **External optional** means the tool can fetch a public URL only when you use that feature and external checks are enabled.
-- **Local holiday data** means WFH Tracker uses the built-in holiday list in the browser.
+| Badge | Meaning | Tools |
+| --- | --- | --- |
+| **Local only** | Local files and work data stay in the browser or a user-selected folder. The tool has no required third-party data request. | Bookmarklet, Config eDM, Campaign Counter, Database Generator, TNC Uploader, Text Correction, WFH Tracker, Documentation |
+| **External checks optional** | The core workflow is local, but an entered public URL can be fetched when the related external check is used and enabled. | Database Checker |
+| **Local + CDN assets** | Work data is processed locally, but the page may download static libraries from a CDN. | DOCX to HTML, Layout Slicer |
+| **External + CDN assets** | The tool may fetch an entered public layout URL through a selected provider/proxy and may download static CDN libraries. | Layout Checker |
+
+How to read the badge:
+
+- **Local** refers to campaign files, pasted content, generated output, and tool state being processed in the browser or selected local folder.
+- **External** refers only to an optional URL-based request. It does not mean local files are uploaded automatically.
+- **CDN assets** are downloaded libraries; they are not destinations for campaign files.
+- **Optional** means the request is triggered only when the feature is used. Pasting HTML instead of entering a URL avoids the URL-fetch path.
+- Generated public links are text values. Creating or copying a link does not upload the local PDF or campaign file.
+
+The badge does not promise that the browser, extensions, operating system, hosting provider, or a manually opened external website cannot observe normal network metadata. Use the Security Proof and audit steps above for deployment-specific verification.
 :::
 
 :::details Checklist

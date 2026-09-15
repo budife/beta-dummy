@@ -2,6 +2,10 @@
 
 All notable user-facing changes to BETA are tracked here.
 
+## Core v6.16.27 - 16 September 2026
+
+- Documented the meaning of every header privacy badge, including local processing, optional URL checks, and CDN asset downloads.
+
 ## Core v6.16.26 - 16 September 2026
 
 - Corrected the Home tool counter to exclude Documentation and count the 11 actual tools only.
