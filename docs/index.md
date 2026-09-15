@@ -455,7 +455,7 @@ Cheers,
 :::details Credits
 
 - **budife.psd** - creator and maintainer of BETA.
-- **Yuda Andi** - contributor and collaborator.
+- **Yuda Andi** - contributor, collaborator, and coach.
 - **OpenCode** - AI coding assistant used during development and maintenance.
 - **GPT-5.6 Luna** - model used through OpenCode for development assistance.
 - **BETA** - internal campaign operations toolkit.
