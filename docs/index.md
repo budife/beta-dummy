@@ -1,12 +1,13 @@
 ---
-title: Privacy & Security
-description: Penjelasan rinci tentang data lokal, koneksi eksternal, backup, dan cara audit keamanan setiap tool.
-icon: fa-solid fa-shield-halved
+title: Documentation
+description: Dokumentasi lengkap workflow, keamanan data lokal, koneksi eksternal, backup, dan audit setiap tool.
+icon: fa-solid fa-book-open
 category: Reference
 ---
 
-## Security Navigation
+## Documentation Navigation
 
+- [Security proof](#security-proof)
 - [Security summary](#privacy-network-behavior)
 - [Data by tool](#data-handling-by-tool)
 - [Network controls](#network-settings)
@@ -14,7 +15,21 @@ category: Reference
 - [Recovery and audit](#recovery-and-audit)
 - [Credits](#credits-dedication)
 
-Use the search field to find a tool, data type, setting, filename, or error message quickly. This page combines the former Documentation and Maintenance pages.
+Use the search field to find a tool, data type, setting, filename, or error message quickly. This page combines the former Documentation and Maintenance pages and includes an auditable security proof.
+
+## Security Proof
+
+The following points are verifiable from the static source code and browser behavior:
+
+- There is no application endpoint that accepts uploaded campaign files.
+- Local file workflows use browser JavaScript, `localStorage`, IndexedDB, or a folder explicitly selected through the browser.
+- Campaign Counter, WFH Tracker, TNC Uploader, Config eDM, Database Generator, DOCX conversion, Text Correction, and Layout Slicer do not send their local work data to a third party.
+- TNC Uploader has no automatic PDF link checker or proxy fallback.
+- WFH Tracker does not call a holiday API; its holiday list is bundled in the tool source.
+- External requests are limited to explicitly used public URL workflows and static CDN assets listed below.
+- URL requests do not silently attach local database, PDF, DOCX, Campaign Counter, or WFH data.
+
+This is a source-level and runtime-design guarantee, not a claim that the browser, hosting provider, browser extensions, operating system, or a manually selected external URL can never observe network metadata. Use the audit steps below for the deployment you are using.
 
 ## Privacy & Network Behavior
 

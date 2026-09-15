@@ -64,7 +64,7 @@ const ROUTES = {
   },
   '/maintenance': {
     content: 'index.md',
-    label: 'Privacy & Security',
+    label: 'Documentation',
     source: 'docs'
   }
 };
@@ -142,11 +142,11 @@ const TOOL_META = {
   },
   '/docs': {
     icon: 'fa-solid fa-shield-halved',
-    label: 'Privacy & Security'
+    label: 'Documentation'
   },
   '/maintenance': {
     icon: 'fa-solid fa-shield-halved',
-    label: 'Privacy & Security'
+    label: 'Documentation'
   }
 };
 

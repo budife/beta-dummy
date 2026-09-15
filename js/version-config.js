@@ -13,7 +13,7 @@ function generateBuildNumber() {
 }
 
 const VERSION_CONFIG = {
-  version: '6.16.22',
+  version: '6.16.23',
   buildDate: new Date().toISOString(),
   buildNumber: generateBuildNumber(),
   environment: 'development',

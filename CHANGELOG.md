@@ -2,6 +2,10 @@
 
 All notable user-facing changes to BETA are tracked here.
 
+## Core v6.16.23 - 16 September 2026
+
+- Renamed the combined Privacy & Security page to Documentation while keeping its detailed security proof and audit guidance.
+
 ## Core v6.16.22 - 16 September 2026
 
 - Fixed Privacy & Security section navigation tabs after combining Documentation and Maintenance.
