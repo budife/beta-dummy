@@ -39,9 +39,9 @@ test('all tool routes have a tool version entry', () => {
   }
 });
 
-test('home tool count excludes maintenance route', () => {
+test('home tool count excludes documentation and maintenance routes', () => {
   const app = read('js/app.js');
-  assert.match(app, /const TOOL_COUNT = Object\.keys\(TOOL_META\)\.filter\(\(path\) => path !== '\/maintenance'\)\.length;/);
+  assert.match(app, /const TOOL_COUNT = Object\.keys\(TOOL_META\)[\s\S]*path !== '\/docs'[\s\S]*path !== '\/maintenance'/);
   assert.match(read('content/home.md'), /\*\*Available tools:\*\* `11`/);
 });
 

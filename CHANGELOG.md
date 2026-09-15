@@ -2,6 +2,10 @@
 
 All notable user-facing changes to BETA are tracked here.
 
+## Core v6.16.26 - 16 September 2026
+
+- Corrected the Home tool counter to exclude Documentation and count the 11 actual tools only.
+
 ## Core v6.16.25 - 16 September 2026
 
 - Completed the English UI and active documentation translation pass.

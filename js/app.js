@@ -150,7 +150,9 @@ const TOOL_META = {
   }
 };
 
-const TOOL_COUNT = Object.keys(TOOL_META).filter((path) => path !== '/maintenance').length;
+const TOOL_COUNT = Object.keys(TOOL_META)
+  .filter((path) => path !== '/docs' && path !== '/maintenance')
+  .length;
 
 const TOOL_PRIVACY = {
   '/bookmarklet': 'Local only',
