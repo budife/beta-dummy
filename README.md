@@ -20,22 +20,29 @@ Internal deployment; server URL is environment-specific.
 | Tool | Status | Purpose |
 | --- | --- | --- |
 | Bookmarklet | Stable | Browser shortcuts for repetitive page cleanup and helper actions. |
-| Campaign Counter | Beta | Track campaign ID usage locally from Monday-style folder/XLSX workflows. |
+| Campaign Counter | Stable | Generate and track Campaign IDs locally with folder scanning and JSON import/export. |
 | Config eDM | Stable | Open and update eDM XML configuration files with safer field editing. |
+| Database Checker | Stable | Validate database packages locally and optionally test entered public layout URLs. |
+| Database Generator | Stable | Generate campaign database output files locally from customer and KRHRED inputs. |
 | Layout Checker | Stable | Load HTML layouts, apply KRHRED values, preview, open in a new tab, and capture screenshots when browser security allows. |
-| Layout Slicer | Beta | Slice flat JPG/PNG layouts into ordered image assets. |
+| Layout Slicer | Stable | Copy campaign folders and slice PDF/image layouts into ordered image assets. |
 | DOCX to HTML | Stable | Convert DOCX files into upload-ready HTML directly in the browser. |
-| TNC Uploader | Beta | Rename, queue, save, and generate public links for PDF terms and conditions. |
-| WFH Tracker | Stable | Track WFH/WFO/cuti/libur days using built-in local holiday data. |
+| TNC Uploader | Stable | Rename, queue, save, and generate public links for PDF terms and conditions locally. |
+| Text Correction | Stable | Convert pasted text to plain text and apply common text transformations locally. |
+| WFH Tracker | Stable | Track WFH/WFO and holidays using built-in local holiday data. |
+| Documentation | Stable | Review workflows, privacy badges, security proof, backups, and network behavior. |
 
 ## Privacy Notes
 
-This project is designed for internal-style daily work and avoids sending sensitive data out by default.
+This project is designed for internal-style daily work and processes sensitive data locally by default.
 
-- Database files, generated campaign IDs, WFH marks, and most tool data stay in the browser or selected local folders.
-- External network access is optional for features such as layout URL fetching and proxy fallback.
-- DOCX to HTML loads Mammoth, JSZip, CodeMirror, and docx-preview from CDN assets; mirror these assets locally if the private server blocks outbound CDN access.
+- Database TXT/CSV/XML files, DOCX files, PDFs, pasted HTML, generated campaign IDs, WFH marks, and most tool data stay in the browser or selected local folders.
 - Campaign Counter stores its counter, activity, folder scans, and JSON backups in the current browser only.
+- TNC Uploader does not upload PDFs and no longer performs automatic PDF link checks.
+- WFH Tracker uses built-in holiday data and does not call an external holiday API.
+- External network access is limited to explicitly used public URL workflows in Layout Checker and Database Checker, plus static CDN assets used by some tools.
+- DOCX to HTML may load Mammoth, JSZip, CodeMirror, and docx-preview from CDN assets; mirror these assets locally if the deployment must avoid CDN requests.
+- Read the [Documentation](/docs) page for the per-tool privacy badge guide, security proof, storage details, backup controls, and audit steps.
 - Review the source before using it with confidential work. The code is plain static web code and can be inspected directly in this repository.
 
 ## Run Locally

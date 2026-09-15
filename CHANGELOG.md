@@ -2,6 +2,10 @@
 
 All notable user-facing changes to BETA are tracked here.
 
+## Documentation - 16 September 2026
+
+- Updated README tool statuses, tool coverage, local storage behavior, and external request boundaries to match the current application.
+
 ## Core v6.16.27 - 16 September 2026
 
 - Documented the meaning of every header privacy badge, including local processing, optional URL checks, and CDN asset downloads.
