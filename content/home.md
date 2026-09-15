@@ -22,6 +22,7 @@ Use the sidebar to open a tool, or start with one of the quick access links belo
 ## Recent Updates
 
 ### 16 September 2026
+- **Core v6.16.21** - Combined Documentation and Maintenance into one detailed Privacy & Security page covering local data, external requests, backups, controls, and audit guidance.
 - **Campaign Counter** - Fixed Generate staying disabled after returning from another tool and made clipboard copying optional.
 - **TNC Uploader** - Fixed queued PDF rendering, added numbered dropped-file entries, and removed external link checks.
 - **WFH Tracker** - Removed holiday API synchronization and kept holiday data local-only.

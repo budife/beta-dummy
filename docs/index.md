@@ -1,55 +1,98 @@
 ---
-title: Documentation
-description: Internal operating guide, privacy notes, and maintenance references for every eDM Helper tool.
-icon: fa-solid fa-book-open
+title: Privacy & Security
+description: Penjelasan rinci tentang data lokal, koneksi eksternal, backup, dan cara audit keamanan setiap tool.
+icon: fa-solid fa-shield-halved
 category: Reference
 ---
 
-## Docs Navigation
+## Security Navigation
 
-- [Privacy](#privacy-network-behavior)
-- [Basics](#global-navigation)
-- [Tools](#bookmarklet)
-- [Local Backup](#local-data-backup)
-- [Maintenance](#release-workflow)
-- [Troubleshooting](#troubleshooting)
-- [Credits](#credits-dedication)
+- [Security summary](#privacy-network-behavior)
+- [Data by tool](#data-handling-by-tool)
+- [Network controls](#network-settings)
+- [Local backup](#local-data-backup)
+- [Recovery and audit](#recovery-and-audit)
 
-Use the search field to find a workflow, setting, filename, or error message quickly. Expand all is useful when you want to read the guide end-to-end; collapse all brings the page back to a compact reference view.
+Use the search field to find a tool, data type, setting, filename, or error message quickly. This page combines the former Documentation and Maintenance pages.
 
 ## Privacy & Network Behavior
 
-eDM Helper is designed as a local-first internal helper. Files such as database TXT, XML config, XLSX imports, PDFs, pasted HTML, customer emails, and KRHRED values are processed in the browser unless a tool explicitly checks a public URL.
+eDM Helper is a local-first static web application. Local files and campaign data are processed by JavaScript in the browser. There is no application upload endpoint, server-side campaign database, or automatic cloud sync for local work data.
 
-- Database, XML, XLSX, PDF, and generated output files are not uploaded by eDM Helper.
-- Campaign Counter and Monday bookmarklet data stay in browser-local storage.
-- TNC Uploader saves files to the folder selected by the user and only generates public URL text.
-- Network access is only used by URL-based checks and layout fetching.
-- Proxy fallback should only be enabled when browser CORS blocks direct access and the user accepts that the target public URL may be requested through a third-party proxy.
+- Database, XML, XLSX, DOCX, PDF, pasted HTML, and generated output files are not uploaded by eDM Helper.
+- Campaign Counter, WFH Tracker, TNC Uploader history, and configuration drafts stay in browser storage or IndexedDB.
+- TNC Uploader saves PDFs to a folder selected by the user and has no automatic link checker.
+- WFH Tracker uses built-in holiday data and has no holiday API request.
+- External requests exist only for explicitly selected public URL workflows and static CDN assets.
 
 :::details What can contact a third-party service?
 
-- Layout Checker URL loading may fetch the layout URL directly and, if enabled, through proxy fallbacks.
-- TNC Uploader Check may verify a public PDF URL directly and, if enabled, through proxy fallbacks.
+- Layout Checker may send an entered public layout URL to its selected fetch provider or proxy.
+- Database Checker may request an entered public layout URL when Layout Test uses a URL instead of pasted HTML.
+- Browser pages may request CDN libraries such as Font Awesome, Mammoth, CodeMirror, html2canvas, JSZip, or PDF.js.
 
-These flows do not intentionally upload local files or customer databases. They only request the URL or year needed for the selected action.
+These flows do not intentionally upload local files, PDFs, DOCX files, customer databases, Campaign Counter data, or WFH marks. URL providers receive only the public URL required for the selected request.
 :::
 
 :::details What stays local?
 
 - Config eDM XML parsing, editing, and saving.
-- Campaign Counter XLSX import and ID history.
+- Database parsing, validation, findings, and pasted HTML.
+- Database Generator inputs and generated files.
+- Campaign Counter counter, activity, folder scans, and JSON backups.
 - Bookmarklet local campaign ID data.
+- DOCX conversion and editing.
 - TNC PDF queue/history and generated links.
-- WFH/WFO marks in the calendar.
+- Layout Slicer source processing and generated assets.
+- Text Correction text processing.
+- WFH/WFO marks, statistics, and built-in holidays.
 :::
 
 ## Network Settings
 
-Use the [Maintenance](/maintenance) page when working in stricter office environments. Privacy settings are saved in this browser only and apply immediately to the related tool.
+Use these controls before working with stricter campaign data. Settings are saved in this browser only.
 
-- Turn off external URL checks to prevent tools from fetching public layout/PDF URLs.
-- Turn off proxy fallback to allow direct browser checks only.
+- Turn off external URL checks to prevent optional URL fetch workflows.
+- Turn off proxy fallback to prevent third-party proxy requests.
+
+{{privacy-settings}}
+
+## Data Handling By Tool
+
+| Tool | Local data | Possible external activity |
+| --- | --- | --- |
+| Campaign Counter | Counter, activity, folder scans, JSON backups | None |
+| Config eDM | XML parsing, edits, selected folders | None for local files |
+| Database Checker | Database files, pasted HTML, validation results | Entered public layout URLs only |
+| Database Generator | Inputs and generated files | None for local generation |
+| DOCX to HTML | DOCX conversion and editing | CDN libraries only |
+| Layout Checker | Pasted HTML and local test values | Entered layout URL, provider/proxy, CDN screenshot library |
+| Layout Slicer | Local PDF/image processing and generated assets | CDN libraries only |
+| TNC Uploader | PDF queue, history, folder save, generated links | None; no link checker |
+| Text Correction | Pasted text and generated output | None |
+| WFH Tracker | Calendar marks, stats, built-in holidays | None |
+| Bookmarklet | Browser-local helper data | Actions run on the page where clicked |
+
+## Local Data Backup
+
+Backup files are generated and downloaded by the browser. They are not uploaded by eDM Helper.
+
+{{local-backup}}
+
+## Recovery And Audit
+
+- Importing a backup changes matching local browser data only.
+- Folder permissions are managed by the browser and are not included in backups.
+- Campaign Counter also has its own JSON Export/Import controls.
+- Browser DevTools Network can audit requests while a tool is running.
+- For strict mode, disable external URL checks and proxy fallback, paste HTML instead of entering a layout URL, and mirror CDN assets locally.
+
+## Technical Audit
+
+- Static HTML, CSS, and JavaScript are served without a backend upload API.
+- Local storage uses browser `localStorage`, IndexedDB, and user-selected File System Access folders.
+- The source code is available in the repository for review.
+- External URL paths are limited to explicitly used Layout Checker and Database Checker URL workflows.
 
 ## Global Navigation
 
@@ -57,7 +100,7 @@ The app uses clean SPA routes with a fixed sidebar. Opening a tool changes only 
 
 - Home: `/`
 - Docs: `/docs`
-- Maintenance: `/maintenance`
+- Legacy Maintenance URL: `/maintenance` (opens this page)
 - Bookmarklet: `/bookmarklet`
 - Campaign Counter: `/campaign-counter`
 - Config eDM: `/config-edm`
@@ -313,7 +356,7 @@ The helper updates Recent Updates and `CHANGELOG.md`. Core releases also update 
 
 :::details Backup and restore
 
-Open `/maintenance` to export or import browser-local data. The backup downloads as JSON and is not uploaded by eDM Helper.
+Use the Local Data Backup section above to export or import browser-local data. The backup downloads as JSON and is not uploaded by eDM Helper.
 
 Use this before clearing browser data, switching machines, or moving between office browser profiles.
 :::
@@ -327,7 +370,7 @@ The app uses browser storage for convenience:
 - Campaign Counter imported IDs.
 - Bookmarklet campaign tracker data.
 - WFH/WFO marks.
-- WFH holiday cache.
+- Built-in WFH holiday data.
 - TNC queue/history.
 - Layout drafts such as recent URL/source where applicable.
 

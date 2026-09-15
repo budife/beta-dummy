@@ -2,6 +2,12 @@
 
 All notable user-facing changes to BETA are tracked here.
 
+## Core v6.16.21 - 16 September 2026
+
+- Combined Documentation and Maintenance into one Privacy & Security page.
+- Added a detailed per-tool data-handling table, local-storage explanation, backup controls, network controls, and audit guidance.
+- Kept `/maintenance` as a legacy URL that opens the combined page.
+
 ## Core and Tool Updates - 16 September 2026
 
 - Kept Campaign Counter Generate enabled after returning from another tool and made clipboard copying best-effort.

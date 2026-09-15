@@ -71,13 +71,13 @@ const TOOL_VERSIONS = {
     status: 'stable'
   },
   docs: {
-    label: 'Documentation',
+    label: 'Privacy & Security',
     version: '1.0.2',
     status: 'stable'
   },
   maintenance: {
-    label: 'Maintenance',
-    version: '1.0.2',
+    label: 'Privacy & Security',
+    version: '1.0.3',
     status: 'stable'
   }
 };

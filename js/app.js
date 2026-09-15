@@ -63,8 +63,9 @@ const ROUTES = {
     source: 'docs'
   },
   '/maintenance': {
-    content: 'maintenance.md',
-    label: 'Maintenance'
+    content: 'index.md',
+    label: 'Privacy & Security',
+    source: 'docs'
   }
 };
 
@@ -81,7 +82,7 @@ const LEGACY_PATHS = {
   '/layout-slicer.html': '/layout-slicer',
   '/tnc-uploader.html': '/tnc-uploader',
   '/wfh-tracker.html': '/wfh-tracker',
-  '/maintenance.html': '/maintenance'
+  '/maintenance.html': '/docs'
 };
 
 const viewport = document.getElementById('content-viewport');
@@ -139,9 +140,13 @@ const TOOL_META = {
     icon: 'fa-solid fa-calendar-days',
     label: 'WFH Tracker'
   },
+  '/docs': {
+    icon: 'fa-solid fa-shield-halved',
+    label: 'Privacy & Security'
+  },
   '/maintenance': {
-    icon: 'fa-solid fa-screwdriver-wrench',
-    label: 'Maintenance'
+    icon: 'fa-solid fa-shield-halved',
+    label: 'Privacy & Security'
   }
 };
 
@@ -703,6 +708,8 @@ async function renderLocalBackup(container) {
 
 function enhanceDocsPage(container) {
   renderDocsTools(container);
+  renderLocalBackup(container);
+  renderPrivacySettings(container);
   const currentAnchor = window.location.hash.slice(1);
   const firstTab = container.querySelector('[data-section="docs-navigation"] a[data-anchor]');
   setActiveDocsTab(container, currentAnchor || firstTab?.dataset.anchor);
@@ -759,10 +766,6 @@ function renderDocsTools(container) {
   tools.querySelector('[data-docs-collapse]').addEventListener('click', () => {
     details.forEach((item) => { item.open = false; });
   });
-}
-
-async function enhanceMaintenancePage(container) {
-  await Promise.all([renderLocalBackup(container), renderPrivacySettings(container)]);
 }
 
 function setActiveLink(path) {
@@ -1026,10 +1029,6 @@ async function renderPage(path, route, markdown) {
       markdownContainer.classList.add('home-dashboard');
       enhanceHomeDashboard(markdownContainer);
       applySidebarBadges();
-    }
-    if (path === '/maintenance') {
-      markdownContainer.classList.add('docs-content');
-      await enhanceMaintenancePage(markdownContainer);
     }
   }
 
