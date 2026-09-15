@@ -22,6 +22,7 @@ Use the sidebar to open a tool, or start with one of the quick access links belo
 ## Recent Updates
 
 ### 16 September 2026
+- **Documentation** - Added Credits attribution for budife.psd, Yuda Andi, OpenCode, and GPT-5.6 Luna.
 - **Core v6.16.27** - Added a detailed explanation of every tool privacy badge and what each label does and does not mean.
 - **Core v6.16.26** - Corrected the Home tool counter to show the 11 actual tools, excluding Documentation.
 - **Core v6.16.25** - Completed the English UI/documentation audit, aligned standalone cache-busters, and added local-only integration regression checks.

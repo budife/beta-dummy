@@ -454,6 +454,10 @@ Cheers,
 
 :::details Credits
 
+- **budife.psd** - creator and maintainer of BETA.
+- **Yuda Andi** - contributor and collaborator.
+- **OpenCode** - AI coding assistant used during development and maintenance.
+- **GPT-5.6 Luna** - model used through OpenCode for development assistance.
 - **BETA** - internal campaign operations toolkit.
 - **Vanilla JavaScript, CSS, and Markdown** - the simple stack behind the app shell and documentation.
 - **Font Awesome** - icon set for the sidebar, buttons, and tool UI.

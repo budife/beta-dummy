@@ -4,6 +4,10 @@ All notable user-facing changes to BETA are tracked here.
 
 ## Documentation - 16 September 2026
 
+- Added Credits attribution for budife.psd, Yuda Andi, OpenCode, and GPT-5.6 Luna.
+
+## Documentation - 16 September 2026
+
 - Updated README tool statuses, tool coverage, local storage behavior, and external request boundaries to match the current application.
 
 ## Core v6.16.27 - 16 September 2026
