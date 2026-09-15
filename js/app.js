@@ -1154,11 +1154,11 @@ document.addEventListener('click', (event) => {
   if (targetPath !== activeRoutePath) {
     const frame = viewport.querySelector('.tool-frame');
     const slicerState = frame?.contentWindow?.getSlicerState?.();
-    if (slicerState && (slicerState.hasImage || slicerState.hasSlices || slicerState.hasGenerated) && !window.confirm('Tool ini memiliki data yang belum tersimpan. Tetap pindah?')) {
+    if (slicerState && (slicerState.hasImage || slicerState.hasSlices || slicerState.hasGenerated) && !window.confirm('This tool has unsaved data. Leave anyway?')) {
       return;
     }
     const tncState = frame?.contentWindow?.getTncUploaderState?.();
-    if (tncState && (tncState.hasQueuedFiles || tncState.hasUploadedFiles) && !window.confirm('TNC Uploader memiliki PDF yang sudah di-upload atau masih berada di queue. Tetap pindah?')) {
+    if (tncState && (tncState.hasQueuedFiles || tncState.hasUploadedFiles) && !window.confirm('TNC Uploader has uploaded or queued PDFs. Leave anyway?')) {
       return;
     }
   }

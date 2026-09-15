@@ -103,7 +103,7 @@
     generateCampaign: async (username, dateStamp, campaignName) => {
       const nextId = Math.min(read().currentCampaignId + 1, 9999);
       const stamp = dateStamp || new Date().toISOString().slice(0, 10).replaceAll('-', '');
-      const slug = String(campaignName || 'nama-campaign').trim().replace(/\s+/g, '') || 'nama-campaign';
+      const slug = String(campaignName || 'campaign-name').trim().replace(/\s+/g, '') || 'campaign-name';
       const result = { campaign_id: nextId, full_id: `${stamp}_${slug}_${String(nextId).padStart(4, '0')}` };
       updateCounter(nextId, { generated_by: username, action: 'generate', full_id: result.full_id });
       return result;

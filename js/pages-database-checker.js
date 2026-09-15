@@ -138,7 +138,7 @@ class FileProcessor {
 class VirtualScroller {
   constructor(container, itemHeight = 20){ // Reduced from 40 to 20 for compact display
     this.container = container;
-    // Cari virtual-scroll-content atau buat baru setelah header
+    // Find virtual-scroll-content or create it after the header.
     this.content   = container.querySelector('.virtual-scroll-content');
     if (!this.content) {
       // Buat div inner jika tidak ada
@@ -903,7 +903,7 @@ class DatabaseChecker {
     if (!this.currentLines.length){ alert('Please load a file first'); return; }
     this.detectSchema();
     this.rowsEl.innerHTML = '';
-    this.emailInfoEl.textContent = 'Masukkan email lalu tekan Search.';
+    this.emailInfoEl.textContent = 'Enter an email, then press Search.';
     this.modal.setAttribute('open','');
     this.modal.classList.add('show');
     setTimeout(()=>this.emailInput?.focus(),0);
@@ -1690,7 +1690,7 @@ class DatabaseChecker {
 
   async renderSearchResults(entries, q) {
     if (!entries.length){
-      this.rowsEl.innerHTML = `<div class="muted">Tidak ada KRHRED untuk filter ini.</div>`;
+        this.rowsEl.innerHTML = `<div class="muted">No KRHRED units match this filter.</div>`;
       return;
     }
 
@@ -2804,10 +2804,10 @@ class DatabaseChecker {
 
     const unitsSet = new Set();
     const emptyDataUnits = new Set();
-    const invalidFormatUnits = new Set(); // Unit dengan format tidak valid
-    const invalidEmailUnits = new Set(); // Unit dengan email tidak valid
-    const longDataUnits = new Set(); // Unit dengan data terlalu panjang
-    const missingFieldUnits = new Set(); // Unit dengan field kosong
+    const invalidFormatUnits = new Set(); // Units with invalid format
+    const invalidEmailUnits = new Set(); // Units with invalid email
+    const longDataUnits = new Set(); // Units with overly long data
+    const missingFieldUnits = new Set(); // Units with empty fields
     const unitDetails = new Map();
     
     // Adaptive chunk size based on dataset size

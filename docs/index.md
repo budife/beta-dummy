@@ -1,6 +1,6 @@
 ---
 title: Documentation
-description: Dokumentasi lengkap workflow, keamanan data lokal, koneksi eksternal, backup, dan audit setiap tool.
+description: Complete documentation for workflows, local data security, external connections, backups, and tool audits.
 icon: fa-solid fa-book-open
 category: Reference
 ---
@@ -424,13 +424,13 @@ The tracker uses the built-in holiday list. Update the local holiday list in the
 
 :::details A small note
 
-Hi rakyat, terima kasih sudah menyempatkan waktu buat mengecek web app buatan saya.
+Hi everyone, thank you for taking the time to review this web app.
 
-Tujuan web app ini dibuat karena saya malas dan biar kerja repetitif jadi lebih sat set. It should be a sederhana web, but here we are: jauh dari kata sempurna, but it is useful.
+This app was built to reduce repetitive work and keep daily tasks moving quickly. It is far from perfect, but it is useful.
 
-100% aman untuk workflow lokal yang sensitif. BETA memproses data di browser atau folder lokal sesuai fungsi yang sedang digunakan.
+For local workflows, BETA processes data in the browser or a local folder according to the active tool.
 
-Untuk deployment internal, gunakan prosedur maintenance dan security yang berlaku di environment target.
+For internal deployment, follow the security and maintenance procedures required by the target environment.
 
 Enjoy bro n sis.
 
@@ -447,7 +447,7 @@ Cheers,
 - **SheetJS/XLSX** - local Monday XLSX imports for Campaign Counter.
 - **CodeMirror** - lightweight HTML editing in Layout Checker.
 - **Browser APIs** - File System Access, IndexedDB, localStorage, drag-and-drop, and clipboard helpers.
-- **Forks and feedback** - welcome, as long as it helps the workflow get less ribet.
+- **Forks and feedback** - welcome when they make the workflow simpler.
 - **The campaign workflow** - messy enough to deserve its own helper.
 - **Local-first tools** - because not every file needs to leave the browser.
 - **Deadline energy** - loud, stressful, but weirdly productive.

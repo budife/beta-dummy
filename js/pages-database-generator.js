@@ -3,7 +3,7 @@
 const $ = (sel) => document.querySelector(sel);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const campaignRegex = /^\d{8}[A-Za-z]?_.*$/; // Format: YYYYMMDD atau YYYYMMDDX, diikuti _Nama-Campaign_XXXX
+    const campaignRegex = /^\d{8}[A-Za-z]?_.*$/; // Format: YYYYMMDD or YYYYMMDDX, followed by _Campaign-Name_XXXX
 
     const campaignIdEl = $('#campaignId');
 
@@ -151,8 +151,8 @@ const $ = (sel) => document.querySelector(sel);
         const chip = document.createElement('button');
         chip.className = 'krhred-chip';
         chip.type = 'button';
-        chip.title = `Hapus ${key}`;
-        chip.setAttribute('aria-label', `Hapus ${key}`);
+        chip.title = `Remove ${key}`;
+        chip.setAttribute('aria-label', `Remove ${key}`);
         chip.dataset.removeKey = key;
         chip.innerHTML = `
           <span>${escapeHtml(unitNumber)}</span>
@@ -179,7 +179,7 @@ const $ = (sel) => document.querySelector(sel);
         th.innerHTML = `
           <div class="krhred-header-content">
             <span class="krhred-key">${escapeHtml(key)}</span>
-            <button class="krhred-remove-btn" type="button" title="Hapus kolom ${escapeHtml(key)}" aria-label="Hapus kolom ${escapeHtml(key)}" data-remove-key="${escapeHtml(key)}">
+            <button class="krhred-remove-btn" type="button" title="Remove KRHRED column ${escapeHtml(key)}" aria-label="Remove KRHRED column ${escapeHtml(key)}" data-remove-key="${escapeHtml(key)}">
               <i class="fa-solid fa-times"></i>
             </button>
           </div>`;
@@ -211,7 +211,7 @@ const $ = (sel) => document.querySelector(sel);
         tdEmail.innerHTML = `
           <div class="email-input-wrapper">
             <input class="email-input${emailIsValid ? '' : ' is-invalid'}" type="email" value="${escapeHtml(email)}" placeholder="email@example.com" aria-label="Email customer" aria-invalid="${String(!emailIsValid)}" />
-            <button class="email-remove-btn" type="button" title="Hapus ${escapeHtml(email)}" aria-label="Hapus ${escapeHtml(email)}" data-remove-row="${rowId}">
+            <button class="email-remove-btn" type="button" title="Remove ${escapeHtml(email)}" aria-label="Remove ${escapeHtml(email)}" data-remove-row="${rowId}">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>`;
@@ -225,7 +225,7 @@ const $ = (sel) => document.querySelector(sel);
           inp.className = 'krhred-input';
           inp.value = rowMap.get(key) ?? '';
           inp.placeholder = 'nilai';
-          inp.setAttribute('aria-label', `${key} untuk ${email}`);
+          inp.setAttribute('aria-label', `${key} for ${email}`);
           inp.addEventListener('input', () => { rowMap.set(key, inp.value); updateUI(); });
           td.appendChild(inp);
           tr.appendChild(td);
@@ -341,7 +341,7 @@ const $ = (sel) => document.querySelector(sel);
         a.href = url; a.download = name;
         a.textContent = name;
         downloadsList.appendChild(a);
-        // revoke setelah 2 menit (link cukup lama untuk di-klik)
+        // Revoke after two minutes so the link remains usable.
         setTimeout(() => { URL.revokeObjectURL(url); a.removeAttribute('href'); a.classList.add('opacity-50','pointer-events-none'); }, 120000);
       }
       dlSection.classList.remove('hidden');
@@ -354,7 +354,7 @@ const $ = (sel) => document.querySelector(sel);
       btnSave.setAttribute('aria-busy', 'true');
       btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Opening...';
       try {
-        if (!('showDirectoryPicker' in window)) throw new Error("Browser Anda tidak mendukung 'Save to folder'. Coba Chrome/Edge desktop.");
+         if (!('showDirectoryPicker' in window)) throw new Error("This browser does not support 'Save to folder'. Try desktop Chrome or Edge.");
         const dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
         btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Saving...';
         for (const [name, content] of Object.entries(files)) {
@@ -363,12 +363,12 @@ const $ = (sel) => document.querySelector(sel);
           await writable.write(content);
           await writable.close();
         }
-        setStatus('Empat file berhasil disimpan ke folder yang dipilih.', 'ready');
+        setStatus('Four files were saved to the selected folder.', 'ready');
       } catch (e) {
         if (e && e.name === 'AbortError') return;
-        errorEl.textContent = e?.message || 'Gagal menyimpan ke folder.';
+        errorEl.textContent = e?.message || 'Unable to save to the folder.';
         errorEl.classList.remove('hidden');
-        setStatus('File belum tersimpan. Periksa pesan error di bawah.', 'error');
+        setStatus('Files were not saved. Check the error message below.', 'error');
       } finally {
         btnSave.removeAttribute('aria-busy');
         btnSave.innerHTML = originalButtonHtml;
@@ -406,35 +406,35 @@ const $ = (sel) => document.querySelector(sel);
       setFieldError(
         campaignError,
         campaignIdVal && !campaignIsValid
-          ? 'Campaign ID harus diawali delapan digit tanggal, lalu underscore.'
+          ? 'Campaign ID must start with an eight-digit date followed by an underscore.'
           : ''
       );
 
       if (ok) {
         const dynamicInfo = campaignType === 'dynamic'
-          ? ` dengan ${krKeys.length} kolom KRHRED`
+              ? ` with ${krKeys.length} KRHRED column${krKeys.length === 1 ? '' : 's'}`
           : '';
-        setStatus(`Siap membuat 4 file untuk ${emails.length} email${dynamicInfo}.`, 'ready');
+        setStatus(`Ready to create 4 files for ${emails.length} email${emails.length === 1 ? '' : 's'}${dynamicInfo}.`, 'ready');
       } else if (!campaignIsValid) {
-        setStatus('Isi Campaign ID dengan format YYYYMMDD_Nama-Campaign_XXXX.', 'neutral');
+        setStatus('Enter a Campaign ID in the format YYYYMMDD_Campaign-Name_XXXX.', 'neutral');
       } else if (!emails.length) {
-        setStatus('Tambahkan minimal satu email untuk membuat file.', 'neutral');
+        setStatus('Add at least one email to create files.', 'neutral');
       } else if (!dynamicReady) {
-        setStatus('Tambahkan minimal satu kolom KRHRED untuk campaign Dynamic.', 'neutral');
+        setStatus('Add at least one KRHRED column for a Dynamic campaign.', 'neutral');
       } else {
-        setStatus('Perbaiki email invalid sebelum membuat file.', 'error');
+        setStatus('Fix invalid email addresses before creating files.', 'error');
       }
 
       // Previews
       if (!ok) {
         renderPreviewEmpty(
           !campaignIsValid
-            ? 'Preview akan muncul setelah Campaign ID valid.'
+            ? 'The preview will appear after entering a valid Campaign ID.'
             : !emails.length
-              ? 'Tambahkan minimal satu email valid untuk melihat preview.'
+              ? 'Add at least one valid email to view the preview.'
               : !dynamicReady
-                ? 'Tambahkan minimal satu kolom KRHRED untuk melihat preview Dynamic.'
-              : 'Perbaiki email invalid untuk melanjutkan.'
+                ? 'Add at least one KRHRED column to view the Dynamic preview.'
+              : 'Fix invalid email addresses to continue.'
         );
         return;
       }
@@ -480,12 +480,12 @@ const $ = (sel) => document.querySelector(sel);
       const v = (newEmailEl.value || '').trim();
       setFieldError(emailError);
       if (!v) {
-        setFieldError(emailError, 'Masukkan alamat email terlebih dahulu.');
+         setFieldError(emailError, 'Enter an email address first.');
         newEmailEl.focus();
         return;
       }
       if (!emailRegex.test(v)) {
-        setFieldError(emailError, 'Format email tidak valid.');
+         setFieldError(emailError, 'Invalid email format.');
         newEmailEl.focus();
         return;
       }
@@ -511,7 +511,7 @@ const $ = (sel) => document.querySelector(sel);
         if (emailRegex.test(e)) valid.push(e);
         else invalid.push(e);
       }
-      // Email yang sama tetap dibuat sebagai customer row terpisah.
+       // Duplicate emails remain separate customer rows.
       for (const e of valid) {
         createEmailRow(e);
       }
@@ -522,20 +522,20 @@ const $ = (sel) => document.querySelector(sel);
       const parts = [];
       if (valid.length) parts.push(`${valid.length} email ditambahkan`);
       if (invalid.length) parts.push(`${invalid.length} invalid (diabaikan)`);
-      bulkInfo.textContent = parts.join(' • ') || 'Tidak ada email baru.';
-      // tetap biarkan teks paste agar bisa diperbaiki lalu Tambahkan lagi
+          bulkInfo.textContent = parts.join(' • ') || 'No new emails.';
+       // Keep the pasted text so it can be corrected and added again.
     });
 
     addKeyBtn.addEventListener('click', () => {
       const key = normalizeKey(newKeyEl.value.trim());
       setFieldError(keyError);
       if (!key) {
-        setFieldError(keyError, 'Masukkan nomor KRHRED yang valid, contoh: 30.');
+         setFieldError(keyError, 'Enter a valid KRHRED number, for example: 30.');
         newKeyEl.focus();
         return;
       }
       if (krKeys.includes(key)) {
-        setFieldError(keyError, 'Kolom KRHRED tersebut sudah ada.');
+         setFieldError(keyError, 'That KRHRED column already exists.');
         newKeyEl.focus();
         return;
       }
@@ -563,7 +563,7 @@ const $ = (sel) => document.querySelector(sel);
         await new Promise(r => setTimeout(r, 120));
       }
       renderDownloadLinks(files);
-      setStatus('Download dimulai. Link manual tersedia jika browser memblokir salah satu file.', 'ready');
+       setStatus('Download started. Manual links are available if the browser blocks a file.', 'ready');
     });
 
     btnSave.addEventListener('click', async () => {

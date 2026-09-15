@@ -478,7 +478,7 @@
     } else if (state.mode === 'replace') {
       setStatus('Replacement PDF added. Active queue is limited to this one file.', 'success');
     } else if (duplicate) {
-      setStatus(`${duplicate.targetName} sudah pernah disimpan di folder tujuan ini. Pilih nama lain atau gunakan Replace PDF link.`, 'error');
+      setStatus(`${duplicate.targetName} has already been saved in this destination folder. Choose another name or use Replace PDF link.`, 'error');
     } else {
       setStatus(`${incoming.length} PDF file(s) added.`, 'success');
     }

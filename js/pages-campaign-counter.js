@@ -22,7 +22,7 @@ function formatDatestamp(date) {
 function slugifyCampaignName(name) {
   return name
     .trim()
-    .replace(/\s+/g, '') || 'nama-campaign';
+    .replace(/\s+/g, '') || 'campaign-name';
 }
 
 function buildCopiedId(campaignId, campaignName, dateStamp) {

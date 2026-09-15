@@ -81,9 +81,21 @@ test('shell loads required maintenance scripts', () => {
 });
 
 test('standalone tools use the current core version-config cache-buster', () => {
+  const versionConfig = read('js/version-config.js');
+  const coreVersion = versionConfig.match(/version:\s*'([^']+)'/)?.[1];
+  assert.ok(coreVersion, 'core version exists');
   const toolsDir = path.join(root, 'tools');
   for (const fileName of fs.readdirSync(toolsDir).filter((name) => name.endsWith('.html'))) {
     const html = read(`tools/${fileName}`);
-    assert.match(html, /version-config\.js\?v=6\.16\.19/, `${fileName} uses current version config`);
+    assert.match(html, new RegExp(`version-config\\.js\\?v=${coreVersion.replace(/\./g, '\\.')}`), `${fileName} uses current version config`);
   }
+});
+
+test('local-only tools do not load their removed external integrations', () => {
+  const campaignCounter = read('tools/campaign-counter.html');
+  const tncUploader = read('js/pages-tnc-uploader.js');
+  const wfhTracker = read('js/pages-wfh-tracker.js');
+  assert.doesNotMatch(campaignCounter, /supabase|campaign-counter-supabase/i);
+  assert.doesNotMatch(tncUploader, /fetch\(|proxy|checkItemLink|verifyLink/i);
+  assert.doesNotMatch(wfhTracker, /fetch\(|HOLIDAY_API|upset\.dev|fetchHolidayMap|EDM_PRIVACY/i);
 });

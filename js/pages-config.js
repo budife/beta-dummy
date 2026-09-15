@@ -773,7 +773,7 @@ function initializeXmlStorage() {
   });
 }
 
-// Util: label tombol dengan ikon FA - Optimized
+  // Utility: label buttons with Font Awesome icons.
 function setStatusIcon(id, status) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -873,17 +873,17 @@ function validateLinkFormat(link) {
     if (!trimmedLink.startsWith('http://')) {
       return { 
         valid: false, 
-        error: 'Link harus dimulai dengan http://mail.hsbc.com.hk' 
+        error: 'The link must start with http://mail.hsbc.com.hk' 
       };
     } else if (trimmedLink.startsWith('http://mail.hsbc.com')) {
       return { 
         valid: false, 
-        error: 'Link harus menggunakan domain lengkap: http://mail.hsbc.com.hk' 
+        error: 'The link must use the complete domain: http://mail.hsbc.com.hk' 
       };
     } else {
       return { 
         valid: false, 
-        error: 'Link harus dimulai dengan http://mail.hsbc.com.hk' 
+        error: 'The link must start with http://mail.hsbc.com.hk' 
       };
     }
   }
@@ -893,12 +893,12 @@ function validateLinkFormat(link) {
     if (trimmedLink.includes('.html')) {
       return { 
         valid: false, 
-        error: 'Link harus diakhiri dengan .html (pastikan tidak ada karakter setelah .html)' 
+        error: 'The link must end with .html (make sure there are no characters after .html)' 
       };
     } else {
       return { 
         valid: false, 
-        error: 'Link harus diakhiri dengan .html' 
+        error: 'The link must end with .html' 
       };
     }
   }
@@ -908,7 +908,7 @@ function validateLinkFormat(link) {
   if (middleContent.trim() === '') {
     return { 
       valid: false, 
-      error: 'Link harus memiliki path setelah domain (contoh: http://mail.hsbc.com.hk/path/file.html)' 
+      error: 'The link must include a path after the domain (example: http://mail.hsbc.com.hk/path/file.html)' 
     };
   }
   
@@ -916,7 +916,7 @@ function validateLinkFormat(link) {
   if (!middleContent.startsWith('/')) {
     return { 
       valid: false, 
-      error: 'Link harus memiliki path yang valid (contoh: http://mail.hsbc.com.hk/1450-campaign.html)' 
+        error: 'The link must have a valid path (example: http://mail.hsbc.com.hk/1450-campaign.html)' 
     };
   }
   
@@ -929,7 +929,7 @@ function validateLinkFormat(link) {
    - Mendeteksi:
      krhred_XX, krhred-unit-XX, <krhred_XX>, <%[KRHRED_Unit_XX]|>, dst.
    - Mengoreksi OCR-like: Oâ†’0, l/Iâ†’1
-   - Melengkapi bagian yang kurang â†’ <%[KRHRED_Unit_XX]|%>
+   - Fill missing sections â†’ <%[KRHRED_Unit_XX]|%>
 */
 const KRHRED_FAST_RE = /(\s*)<?%?\s*\[?\s*KRHRED(?:_Unit)?[_\s-]*([0-9oOlLiI]{1,2})\s*\]?\s*\|?\s*%?>?/gi;
 
@@ -949,7 +949,7 @@ function normalizeKrhredTokens(text) {
   // Invalid jika ada "KRHRED" tanpa angka
   let missingDetected = /\bKRHRED\b(?![_\s-]*[0-9oOlLiI]{1,2})/i.test(text);
 
-  // Ganti semua variasi menjadi format final, preserve space before
+  // Convert all variants to the final format while preserving the preceding space.
   const replaced = text.replace(KRHRED_FAST_RE, (m, spaceBefore, num) => {
     const d2 = toDigits2(num) || '00';
     
@@ -1682,7 +1682,7 @@ function validateCampaignIdFormat(campaignId) {
   if (!formatRegex.test(campaignId)) {
     return { 
       valid: false, 
-      error: 'Format harus: YYYYMMDD[X]_NAMA-CAMPAIGN_XXX atau XXXX (3-4 digit)' 
+      error: 'Format: YYYYMMDD[X]_CAMPAIGN-NAME_XXX or XXXX (3-4 digits)' 
     };
   }
   
@@ -2318,13 +2318,13 @@ function hideCampaignIdTooltip() {
 // Enhanced tooltip messages with context
 const TOOLTIP_MESSAGES = {
   validation: {
-    format: 'Format harus: YYYYMMDD_NAMA-CAMPAIGN_XXX atau XXXX (3-4 digit)',
+    format: 'Format: YYYYMMDD_CAMPAIGN-NAME_XXX or XXXX (3-4 digits)',
     space: 'Campaign ID tidak boleh mengandung spasi',
     length: 'Campaign ID terlalu panjang (maks 50 karakter)',
     empty: 'Campaign ID tidak boleh kosong'
   },
   warning: {
-    past: '⚠️ reminder: tanggal sudah jatuh tempo',
+    past: '⚠️ Reminder: this campaign date has passed',
     future: 'ℹ️ info: campaign masa depan',
     today: '✅ Campaign tanggal hari ini'
   },

@@ -13,10 +13,10 @@
   <meta name="author" content="BETA">
   
   <!-- CSS -->
-  <link rel="stylesheet" href="../css/tokens.css?v=6.16.19">
-  <link rel="stylesheet" href="../css/theme.css?v=6.16.19">
+  <link rel="stylesheet" href="../css/tokens.css?v=6.16.25">
+  <link rel="stylesheet" href="../css/theme.css?v=6.16.25">
   <link rel="stylesheet" href="../css/pages-database-generator.css?v=6.16.19">
-  <link rel="stylesheet" href="../css/controls.css?v=6.16.19">
+  <link rel="stylesheet" href="../css/controls.css?v=6.16.25">
   
   <title>Database Generator - BETA</title>
   <meta name="theme-color" content="#0f172a" />
@@ -66,8 +66,8 @@
               <i class="fa-solid fa-tag form-label-icon" aria-hidden="true"></i>
               Campaign ID
             </label>
-            <input id="campaignId" class="form-input campaign-id-input" placeholder="YYYYMMDD_Nama-Campaign_XXXX" spellcheck="false" aria-describedby="campaignHint campaignError" />
-            <p id="campaignHint" class="form-hint">Contoh: <span class="font-mono">20250817_Independence-Day_1700</span></p>
+            <input id="campaignId" class="form-input campaign-id-input" placeholder="YYYYMMDD_Campaign-Name_XXXX" spellcheck="false" aria-describedby="campaignHint campaignError" />
+            <p id="campaignHint" class="form-hint">Example: <span class="font-mono">20250817_Independence-Day_1700</span></p>
             <p id="campaignError" class="field-error hidden" role="alert"></p>
           </div>
 
@@ -82,14 +82,14 @@
                   <input type="radio" name="campaignType" value="static" checked>
                   <span>
                     <span class="radio-label">Static</span>
-                    <span class="radio-hint">Campaign standar</span>
+                    <span class="radio-hint">Standard campaign</span>
                   </span>
                 </label>
                 <label class="radio-option">
                   <input type="radio" name="campaignType" value="dynamic">
                   <span>
                     <span class="radio-label">Dynamic</span>
-                    <span class="radio-hint">Dengan KRHRED</span>
+                    <span class="radio-hint">With KRHRED</span>
                   </span>
                 </label>
               </div>
@@ -135,7 +135,7 @@
                 <i class="fa-solid fa-paste form-label-icon" aria-hidden="true"></i>
                 Bulk Paste Emails
               </label>
-              <p class="form-hint">Pisahkan dengan baris baru, koma, titik koma, atau spasi.</p>
+              <p class="form-hint">Separate with new lines, commas, semicolons, or spaces.</p>
               <textarea id="bulkEmails" placeholder="email1@a.com&#10;email2@a.com, email3@a.com"></textarea>
               <div class="bulk-actions">
                 <button id="applyBulk" class="btn primary" type="button">
@@ -156,12 +156,12 @@
               <div class="krhred-number-field">
                 <input id="newKey" class="form-input font-mono" type="number" min="1" step="1" inputmode="numeric" placeholder="30" aria-label="Nomor KRHRED Unit" aria-describedby="keyHint keyError" />
               </div>
-              <button id="addKey" class="btn secondary icon-btn" type="button" title="Tambah kolom KRHRED" aria-label="Tambah kolom KRHRED">
+               <button id="addKey" class="btn secondary icon-btn" type="button" title="Add KRHRED column" aria-label="Add KRHRED column">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i>
               </button>
             </div>
             <div id="krhredChips" class="krhred-chip-list" aria-label="KRHRED units"></div>
-            <p id="keyHint" class="form-hint">Kosongkan untuk auto-next.</p>
+             <p id="keyHint" class="form-hint">Leave blank to use the next available unit.</p>
             <p id="keyError" class="field-error hidden" role="alert"></p>
           </div>
         </div>
@@ -186,11 +186,11 @@
         </div>
 
         <details class="table-tips">
-          <summary><i class="fa-regular fa-lightbulb" aria-hidden="true"></i> Panduan tabel</summary>
+           <summary><i class="fa-regular fa-lightbulb" aria-hidden="true"></i> Table guide</summary>
           <ul>
-            <li>Email dan nilai KRHRED dapat diedit langsung di tabel.</li>
-            <li>Gunakan tombol hapus pada baris atau header untuk menghapus data.</li>
-            <li>Tabel akan scroll horizontal ketika kolom KRHRED bertambah.</li>
+             <li>Email and KRHRED values can be edited directly in the table.</li>
+             <li>Use the delete buttons on rows or headers to remove data.</li>
+             <li>The table scrolls horizontally when KRHRED columns are added.</li>
           </ul>
         </details>
       </section>
@@ -219,19 +219,19 @@
         <section id="previews" class="preview-grid" aria-label="Generated file previews">
           <div class="preview-empty">
             <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
-            <p>Isi Campaign ID dan tambahkan minimal satu email valid untuk melihat preview.</p>
+             <p>Enter a Campaign ID and add at least one valid email to preview the output.</p>
           </div>
         </section>
 
         <section id="dlSection" class="manual-downloads hidden">
-          <h3>Unduhan manual</h3>
+           <h3>Manual downloads</h3>
           <div id="downloadsList"></div>
-          <p>Gunakan link ini jika browser memblokir download otomatis.</p>
+           <p>Use these links if the browser blocks automatic downloads.</p>
         </section>
 
         <p class="output-note">
           <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-          Save to folder tersedia di Chrome dan Edge desktop. Browser lain tetap dapat memakai Download 4 files.
+           Save to folder is available in desktop Chrome and Edge. Other browsers can use Download 4 files.
         </p>
       </section>
     </div>
@@ -251,7 +251,7 @@
   </footer>
 
 <script src="../js/footer.js" defer></script>
-<script src="../js/version-config.js?v=6.16.19" defer></script>
+<script src="../js/version-config.js?v=6.16.25" defer></script>
 <script src="../js/pages-database-generator.js?v=6.16.19" defer></script>
 </body>
 </html>

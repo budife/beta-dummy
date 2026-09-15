@@ -22,6 +22,8 @@ Use the sidebar to open a tool, or start with one of the quick access links belo
 ## Recent Updates
 
 ### 16 September 2026
+- **Core v6.16.25** - Completed the English UI/documentation audit, aligned standalone cache-busters, and added local-only integration regression checks.
+- **Core v6.16.24** - Translated active tool interfaces, validation messages, documentation, worker guidance, and user-facing status text to English.
 - **Core v6.16.23** - Renamed the combined Privacy & Security page to Documentation and added an auditable Security Proof section.
 - **Core v6.16.22** - Fixed Privacy & Security navigation tabs and restored the Credits button.
 - **Core v6.16.21** - Combined Documentation and Maintenance into one detailed Privacy & Security page covering local data, external requests, backups, controls, and audit guidance.

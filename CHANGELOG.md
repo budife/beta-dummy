@@ -2,6 +2,17 @@
 
 All notable user-facing changes to BETA are tracked here.
 
+## Core v6.16.25 - 16 September 2026
+
+- Completed the English UI and active documentation translation pass.
+- Aligned standalone tool cache-busters with Core `6.16.24` and made the smoke test read the configured Core version.
+- Added static coverage to prevent removed Supabase, TNC link-checker, and WFH holiday API integrations from returning.
+
+## Core v6.16.24 - 16 September 2026
+
+- Translated active tool interfaces, validation messages, documentation, worker guidance, and user-facing status text to English.
+- Preserved Indonesian holiday names and typo-dictionary entries where the source language is part of the tool's data.
+
 ## Core v6.16.23 - 16 September 2026
 
 - Renamed the combined Privacy & Security page to Documentation while keeping its detailed security proof and audit guidance.

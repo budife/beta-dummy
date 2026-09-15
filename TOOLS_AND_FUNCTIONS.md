@@ -1,7 +1,7 @@
 # eDM Helper - Daftar Tools dan Fungsi
 
 ## Overview
-eDM Helper adalah kumpulan tools berguna untuk email marketing dan produktivitas sehari-hari. Semua tools gratis dan mudah digunakan.
+eDM Helper is a collection of useful tools for email marketing and everyday productivity. All tools are free and easy to use.
 
 ---
 
@@ -10,10 +10,10 @@ eDM Helper adalah kumpulan tools berguna untuk email marketing dan produktivitas
 ### 1. **Bookmarklet** 
 - **File:** `bookmarklet.html`
 - **Icon:** 📖
-- **Fungsi:** Browser tools untuk aksi cepat dan shortcut
+- **Purpose:** Browser tools for quick actions and shortcuts
 - **Fitur:**
-  - Drag-and-drop bookmarklets untuk produktivitas instan
-  - Tools yang dapat digunakan langsung di browser
+  - Drag-and-drop bookmarklets for instant productivity
+  - Tools that run directly in the browser
   - Tidak perlu instalasi tambahan
 
 ### 2. **Campaign Counter**
@@ -22,10 +22,10 @@ eDM Helper adalah kumpulan tools berguna untuk email marketing dan produktivitas
 - **Fungsi:** Mengelola nomor Campaign ID dari export Monday secara lokal
 - **Fitur:**
   - Import XLSX langsung di browser
-  - Mode Merge / Replace untuk data XLSX
+  - Merge / Replace modes for XLSX data
   - Ringkasan campaign, ID unik, reblast, dan baris gagal
   - Tab Regular hingga 9000 Series
-  - Detail nama campaign, tanggal blast, dan reblast dengan popup klik
+  - Campaign names, blast dates, and reblast details in click popups
   - Export JSON sebagai backup lokal
   - Penyimpanan IndexedDB lokal dan Reset Local Data
   - Bookmarklet Monday memiliki database lokal terpisah
@@ -65,14 +65,14 @@ eDM Helper adalah kumpulan tools berguna untuk email marketing dan produktivitas
 ## 🛠️ Fitur Utama Platform
 
 ### Performance Optimized
-- Flat design untuk performa optimal di laptop kentang
-- Tidak ada animasi berat
+- Flat design for optimal performance on low-spec laptops
+- No heavy animations
 - CSS minimalis dan efisien
 
 ### Design System
 - Warna tema: Merah (#F18C8E) dan Putih
-- Flat design yang clean dan modern
-- Responsive untuk semua device
+- Clean, modern flat design
+- Responsive across devices
 
 ### Accessibility
 - Semua tools memiliki proper ARIA labels
@@ -106,27 +106,27 @@ Beta/
 
 ---
 
-## 🔧 Teknologi yang Digunakan
+## 🔧 Technologies Used
 
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **Icons:** Font Awesome 6.5.2
-- **Design:** Custom CSS dengan flat design principle
-- **Performance:** Optimized untuk low-spec devices
+- **Design:** Custom CSS with flat design principles
+- **Performance:** Optimized for low-spec devices
 
 ---
 
 ## 💡 Tips Penggunaan
 
-1. **Bookmarklet** - Drag bookmarklet ke browser toolbar untuk akses cepat
-2. **Campaign Counter** - Import XLSX Monday untuk melihat nomor terpakai dan next ID
-4. **Layout Checker** - Test di berbagai email client untuk memastikan compatibility
+1. **Bookmarklet** - Drag bookmarklets to the browser toolbar for quick access
+2. **Campaign Counter** - Import Monday XLSX files to review used numbers and the next ID
+4. **Layout Checker** - Test layouts across email clients for compatibility
 
 ---
 
 ## 🚀 Cara Menggunakan
 
 1. Buka `index.html` di browser
-2. Klik tool yang diinginkan
+2. Click the desired tool
 3. Follow instruksi di setiap halaman
 4. Semua data tersimpan locally (tidak ada server)
 
